@@ -56,11 +56,7 @@ func ExampleFilter() {
 	list := []string{"a", "b", "c"}
 
 	list2 := Filter(list, func(index int, item string) bool {
-		if index == 1 {
-			return false
-		}
-
-		return true
+		return index != 1
 	})
 	fmt.Println(list2)
 
@@ -101,19 +97,11 @@ func ExampleContainBy() {
 	list := []string{"1", "2", "3"}
 
 	fmt.Println(ContainBy(list, func(index int, item string) bool {
-		if item == "2" {
-			return true
-		}
-
-		return false
+		return item == "2"
 	}))
 
 	fmt.Println(ContainBy(list, func(index int, item string) bool {
-		if item == "4" {
-			return true
-		}
-
-		return false
+		return item == "4"
 	}))
 
 	// Output:
@@ -343,12 +331,12 @@ func ExampleMutualDifference() {
 	list4 := []int{1, 2, 7, 8}
 	fmt.Println(MutualDifference(list3, list4))
 
-	list5 := []int{}
+	var list5 []int
 	list6 := []int{1, 2, 3}
 	fmt.Println(MutualDifference(list5, list6))
 
 	list7 := []int{1, 2, 3}
-	list8 := []int{}
+	var list8 []int
 	fmt.Println(MutualDifference(list7, list8))
 
 	// Output:
@@ -453,10 +441,7 @@ func ExampleFindIndexBy() {
 	}))
 
 	fmt.Println(FindIndexBy(list, func(index int, item int) bool {
-		if item > 3 {
-			return true
-		}
-		return false
+		return item > 3
 	}))
 
 	// Output:
@@ -531,7 +516,7 @@ func ExampleSample() {
 	rand.Seed(time.Now().UnixNano())
 
 	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-	list2 := []string{}
+	var list2 []string
 
 	fmt.Println(Contain(list, Sample(list)))
 

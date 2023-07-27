@@ -23,7 +23,7 @@ func ForEachWithBreak[T any](list []T, iteratee func(index int, item T) bool) {
 	}
 }
 
-// Filter iterates over elements of list, returning an array of all elements predicate returns truthy for.
+// Filter iterates over elements of a slice, returning an array of all elements predicate returns truthy for.
 func Filter[V any](list []V, iteratee func(index int, item V) bool) []V {
 	result := make([]V, 0, len(list))
 
@@ -395,8 +395,8 @@ func Intersection[T comparable](list1, list2 []T) []T {
 }
 
 // MutualDifference returns the mutual difference between two slices.
-// The first value is the collection of element absent of list2.
-// The second value is the collection of element absent of list1.
+// The first value is the collection of elements absent of list2.
+// The second value is the collection of elements absent of list1.
 // Note: This method does not remove duplicate elements from the result.
 func MutualDifference[T comparable](list1, list2 []T) ([]T, []T) {
 	if len(list1) == 0 {
@@ -505,7 +505,7 @@ func EqualElement[T comparable](list1 []T, list2 []T) bool {
 	return true
 }
 
-// FindIndex returns the index of the first occurrence of the target in the slice, or -1 if there is no match.
+// FindIndex returns the index the first occurrence of the target in the slice, or -1 if there is no match.
 func FindIndex[T comparable](list []T, target T) int {
 	for i, item := range list {
 		if item == target {
@@ -569,9 +569,9 @@ func FindUniqueDuplicates[T comparable](list []T) []T {
 	result := make([]T, 0, len(list))
 
 	for _, item := range list {
-		c, _ := exist[item]
+		c, ok := exist[item]
 
-		if c == 1 {
+		if ok && c == 1 {
 			result = append(result, item)
 		}
 		exist[item]++
@@ -588,9 +588,9 @@ func FindUniqueDuplicatesBy[T, U comparable](list []T, iteratee func(index int, 
 	for i, item := range list {
 		key := iteratee(i, item)
 
-		c, _ := exist[key]
+		c, ok := exist[key]
 
-		if c == 1 {
+		if ok && c == 1 {
 			result = append(result, key)
 		}
 		exist[key]++
@@ -599,7 +599,7 @@ func FindUniqueDuplicatesBy[T, U comparable](list []T, iteratee func(index int, 
 	return result
 }
 
-// Shuffle returns randomly shuffles the elements in the given slice.
+// Shuffle returns randomly shuffle the elements in the given slice.
 // Note: Before using the Shuffle function, make sure to call rand.Seed in your program's initialization code.
 func Shuffle[T any](list []T) []T {
 	rand.Shuffle(len(list), func(i, j int) {
@@ -721,7 +721,7 @@ func MaxBy[T any](list []T, iteratee func(index int, item T, max T) bool) T {
 }
 
 // Drop returns a slice with n elements dropped from the start.
-// Note: if n is greater than the length of the slice, an empty slice is returned.
+// Note: if "n" is greater than the length of the slice, an empty slice is returned.
 func Drop[T any](list []T, n int) []T {
 	if n <= 0 {
 		return list
@@ -735,7 +735,7 @@ func Drop[T any](list []T, n int) []T {
 }
 
 // DropLast returns a slice with n elements dropped from the end.
-// Note: if n is greater than the length of the slice, an empty slice is returned.
+// Note: if "n" is greater than the length of the slice, an empty slice is returned.
 func DropLast[T any](list []T, n int) []T {
 	if n <= 0 {
 		return list
@@ -748,7 +748,7 @@ func DropLast[T any](list []T, n int) []T {
 	return list[:len(list)-n]
 }
 
-// Slice Returns a slice from "n" to "m", but not including "m". Like 'slice[n:m]', but doesn't panic on overflow
+// Slice Returns a slice from "n" to "m" but not including "m". Like "slice[n:m]", but doesn't panic on overflow
 func Slice[T any](list []T, n, m int) []T {
 
 	if n >= m {
@@ -808,7 +808,8 @@ func Flatten[T any](collection [][]T) []T {
 }
 
 // InsertAt inserts values into a slice at the specified index.
-// Note: If index is greater than the length of the slice or less than 0, the values are appended to the end of the slice.
+// Note: if the index is greater than the length of the slice or less than 0,
+// the values are appended to the end of the slice.
 func InsertAt[T any](slice []T, index int, value ...T) []T {
 	if len(value) == 0 {
 		return slice

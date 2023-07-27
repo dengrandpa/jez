@@ -59,11 +59,7 @@ func TestFilter(t *testing.T) {
 	list := []string{"a", "b", "c"}
 
 	list2 := Filter(list, func(index int, item string) bool {
-		if index == 1 {
-			return false
-		}
-
-		return true
+		return index != 1
 	})
 
 	ass.Equal([]string{"a", "c"}, list2)
@@ -101,19 +97,11 @@ func TestContainBy(t *testing.T) {
 	list := []string{"1", "2", "3"}
 
 	ass.Equal(true, ContainBy(list, func(index int, item string) bool {
-		if item == "2" {
-			return true
-		}
-
-		return false
+		return item == "2"
 	}))
 
 	ass.Equal(false, ContainBy(list, func(index int, item string) bool {
-		if item == "4" {
-			return true
-		}
-
-		return false
+		return item == "4"
 	}))
 }
 
@@ -436,10 +424,7 @@ func TestFindIndexBy(t *testing.T) {
 	}))
 
 	ass.Equal(3, FindIndexBy(list, func(index int, item int) bool {
-		if item > 3 {
-			return true
-		}
-		return false
+		return item > 3
 	}))
 }
 
