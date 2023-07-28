@@ -90,17 +90,17 @@ func TestContain(t *testing.T) {
 
 }
 
-func TestContainBy(t *testing.T) {
+func TestContainFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	list := []string{"1", "2", "3"}
 
-	ass.Equal(true, ContainBy(list, func(index int, item string) bool {
+	ass.Equal(true, ContainFilter(list, func(index int, item string) bool {
 		return item == "2"
 	}))
 
-	ass.Equal(false, ContainBy(list, func(index int, item string) bool {
+	ass.Equal(false, ContainFilter(list, func(index int, item string) bool {
 		return item == "4"
 	}))
 }
@@ -167,13 +167,13 @@ func TestRemove(t *testing.T) {
 
 }
 
-func TestRemoveBy(t *testing.T) {
+func TestRemoveFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	list := []string{"1", "2", "3"}
 
-	ass.Equal([]string{"3"}, RemoveBy(list, func(index int, item string) bool {
+	ass.Equal([]string{"3"}, RemoveFilter(list, func(index int, item string) bool {
 		if item == "1" || item == "2" {
 			return true
 		}
@@ -406,14 +406,14 @@ func TestFindIndex(t *testing.T) {
 
 }
 
-func TestFindIndexBy(t *testing.T) {
+func TestFindIndexFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	list := []int{1, 2, 3, 5, 3, 5, 6}
 
 	n := 0
-	ass.Equal(4, FindIndexBy(list, func(index int, item int) bool {
+	ass.Equal(4, FindIndexFilter(list, func(index int, item int) bool {
 		if item == 3 {
 			n++
 			if n > 1 {
@@ -423,7 +423,7 @@ func TestFindIndexBy(t *testing.T) {
 		return false
 	}))
 
-	ass.Equal(3, FindIndexBy(list, func(index int, item int) bool {
+	ass.Equal(3, FindIndexFilter(list, func(index int, item int) bool {
 		return item > 3
 	}))
 }
@@ -524,12 +524,12 @@ func TestMin(t *testing.T) {
 	ass.Equal(2, Min(list2))
 }
 
-func TestMinBy(t *testing.T) {
+func TestMinFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	list := []string{"ss12", "xs2", "xx2"}
-	ass.Equal("xs2", MinBy(list, func(index int, item string, max string) bool {
+	ass.Equal("xs2", MinFilter(list, func(index int, item string, max string) bool {
 		if item == "xs2" {
 			return item > max
 		}
@@ -538,7 +538,7 @@ func TestMinBy(t *testing.T) {
 	}))
 
 	list2 := []int{5, 2, 111, 3}
-	ass.Equal(2, MinBy(list2, func(index int, item int, max int) bool {
+	ass.Equal(2, MinFilter(list2, func(index int, item int, max int) bool {
 		return item < max
 	}))
 }
@@ -554,13 +554,13 @@ func TestMax(t *testing.T) {
 	ass.Equal(111, Max(list2))
 }
 
-func TestMaxBy(t *testing.T) {
+func TestMaxFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	list := []string{"ss12", "xs2", "xx2"}
 
-	ass.Equal("xx2", MaxBy(list, func(index int, item string, max string) bool {
+	ass.Equal("xx2", MaxFilter(list, func(index int, item string, max string) bool {
 		if item == "xs2" {
 			return item < max
 		}
@@ -569,7 +569,7 @@ func TestMaxBy(t *testing.T) {
 	}))
 
 	list2 := []int{5, 2, 111, 3}
-	ass.Equal(111, MaxBy(list2, func(index int, item int, max int) bool {
+	ass.Equal(111, MaxFilter(list2, func(index int, item int, max int) bool {
 		return item > max
 	}))
 

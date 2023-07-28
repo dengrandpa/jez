@@ -2,9 +2,9 @@
 
 <div STYLE="page-break-after: always;"></div>
 <p style="font-size: 18px">
-    Some simple and commonly used packages...
+    一些简单且常用的包...
 </p>
 
-English | [简体中文](./README_zh.md)
+简体中文 | [English](./README_en.md)
 
-# Special thanks to ChatGPT for providing technical support!!
+# 特别感谢ChatGPT提供技术支持！！

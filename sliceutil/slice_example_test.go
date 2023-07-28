@@ -92,15 +92,15 @@ func ExampleContain() {
 
 }
 
-func ExampleContainBy() {
+func ExampleContainFilter() {
 
 	list := []string{"1", "2", "3"}
 
-	fmt.Println(ContainBy(list, func(index int, item string) bool {
+	fmt.Println(ContainFilter(list, func(index int, item string) bool {
 		return item == "2"
 	}))
 
-	fmt.Println(ContainBy(list, func(index int, item string) bool {
+	fmt.Println(ContainFilter(list, func(index int, item string) bool {
 		return item == "4"
 	}))
 
@@ -182,11 +182,11 @@ func ExampleRemove() {
 	// [3]
 }
 
-func ExampleRemoveBy() {
+func ExampleRemoveFilter() {
 
 	list := []string{"1", "2", "3"}
 
-	fmt.Println(RemoveBy(list, func(index int, item string) bool {
+	fmt.Println(RemoveFilter(list, func(index int, item string) bool {
 		if item == "1" || item == "2" {
 			return true
 		}
@@ -424,13 +424,13 @@ func ExampleFindIndex() {
 	// -1
 }
 
-func ExampleFindIndexBy() {
+func ExampleFindIndexFilter() {
 
 	list := []int{1, 2, 3, 5, 3, 5, 6}
 
 	n := 0
 
-	fmt.Println(FindIndexBy(list, func(index int, item int) bool {
+	fmt.Println(FindIndexFilter(list, func(index int, item int) bool {
 		if item == 3 {
 			n++
 			if n > 1 {
@@ -440,7 +440,7 @@ func ExampleFindIndexBy() {
 		return false
 	}))
 
-	fmt.Println(FindIndexBy(list, func(index int, item int) bool {
+	fmt.Println(FindIndexFilter(list, func(index int, item int) bool {
 		return item > 3
 	}))
 
@@ -562,10 +562,10 @@ func ExampleMin() {
 	// 2
 }
 
-func ExampleMinBy() {
+func ExampleMinFilter() {
 
 	list := []string{"ss12", "xs2", "xx2"}
-	fmt.Println(MinBy(list, func(index int, item string, max string) bool {
+	fmt.Println(MinFilter(list, func(index int, item string, max string) bool {
 		if item == "xs2" {
 			return item > max
 		}
@@ -575,7 +575,7 @@ func ExampleMinBy() {
 
 	list2 := []int{5, 2, 111, 3}
 
-	fmt.Println(MinBy(list2, func(index int, item int, max int) bool {
+	fmt.Println(MinFilter(list2, func(index int, item int, max int) bool {
 		return item < max
 	}))
 
@@ -598,11 +598,11 @@ func ExampleMax() {
 
 }
 
-func ExampleMaxBy() {
+func ExampleMaxFilter() {
 
 	list := []string{"ss12", "xs2", "xx2"}
 
-	fmt.Println(MaxBy(list, func(index int, item string, max string) bool {
+	fmt.Println(MaxFilter(list, func(index int, item string, max string) bool {
 		if item == "xs2" {
 			return item < max
 		}
@@ -612,7 +612,7 @@ func ExampleMaxBy() {
 
 	list2 := []int{5, 2, 111, 3}
 
-	fmt.Println(MaxBy(list2, func(index int, item int, max int) bool {
+	fmt.Println(MaxFilter(list2, func(index int, item int, max int) bool {
 		return item > max
 	}))
 

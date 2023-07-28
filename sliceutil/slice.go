@@ -58,8 +58,8 @@ func Contain[T comparable](list []T, target T) bool {
 	return false
 }
 
-// ContainBy returns true if iteratee function return true.
-func ContainBy[T any](list []T, iteratee func(index int, item T) bool) bool {
+// ContainFilter returns true if iteratee function return true.
+func ContainFilter[T any](list []T, iteratee func(index int, item T) bool) bool {
 	for i, item := range list {
 		if iteratee(i, item) {
 			return true
@@ -157,8 +157,8 @@ func Remove[T comparable](list []T, items ...T) []T {
 	return result
 }
 
-// RemoveBy removes the first occurrence from the result of the iteratee function.
-func RemoveBy[T comparable](list []T, iteratee func(index int, item T) bool) []T {
+// RemoveFilter removes the first occurrence from the result of the iteratee function.
+func RemoveFilter[T comparable](list []T, iteratee func(index int, item T) bool) []T {
 	if len(list) == 0 {
 		return list
 	}
@@ -516,8 +516,8 @@ func FindIndex[T comparable](list []T, target T) int {
 	return -1
 }
 
-// FindIndexBy returns the index of the first element in the slice that the iteratee function returns true, or -1 if there is no match.
-func FindIndexBy[T any](list []T, iteratee func(index int, item T) bool) int {
+// FindIndexFilter returns the index of the first element in the slice that the iteratee function returns true, or -1 if there is no match.
+func FindIndexFilter[T any](list []T, iteratee func(index int, item T) bool) int {
 	for i, item := range list {
 		if iteratee(i, item) {
 			return i
@@ -660,8 +660,8 @@ func Min[T constraints.Ordered](list []T) T {
 	return min
 }
 
-// MinBy returns the minimum value of a slice using the given iteratee function.
-func MinBy[T any](list []T, iteratee func(index int, item T, max T) bool) T {
+// MinFilter returns the minimum value of a slice using the given iteratee function.
+func MinFilter[T any](list []T, iteratee func(index int, item T, max T) bool) T {
 	var min T
 
 	if len(list) == 0 {
@@ -700,8 +700,8 @@ func Max[T constraints.Ordered](list []T) T {
 	return max
 }
 
-// MaxBy search the maximum value of a slice using the given iteratee function.
-func MaxBy[T any](list []T, iteratee func(index int, item T, max T) bool) T {
+// MaxFilter search the maximum value of a slice using the given iteratee function.
+func MaxFilter[T any](list []T, iteratee func(index int, item T, max T) bool) T {
 	var max T
 
 	if len(list) == 0 {
