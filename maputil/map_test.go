@@ -233,7 +233,7 @@ func TestMapToSliceFilter(t *testing.T) {
 	ass.Equal([]string{"b 2", "d 4"}, list)
 }
 
-func TestDeleteByKeys(t *testing.T) {
+func TestDeletes(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 	m := map[string]int{
@@ -244,7 +244,7 @@ func TestDeleteByKeys(t *testing.T) {
 		"e": 5,
 		"f": 1,
 	}
-	DeleteByKeys(m, "a", "b")
+	Deletes(m, "a", "b")
 	ass.Equal(map[string]int{
 		"c": 3,
 		"d": 4,
@@ -266,26 +266,6 @@ func TestDeleteByValues(t *testing.T) {
 	}
 	DeleteByValues(m, 1, 2)
 	ass.Equal(map[string]int{
-		"c": 3,
-		"d": 4,
-		"e": 5,
-	}, m)
-}
-
-func TestDeleteByValue(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-	}
-	DeleteByValue(m, 1)
-	ass.Equal(map[string]int{
-		"b": 2,
 		"c": 3,
 		"d": 4,
 		"e": 5,

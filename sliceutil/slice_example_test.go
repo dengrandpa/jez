@@ -92,23 +92,6 @@ func ExampleContain() {
 
 }
 
-func ExampleContainFilter() {
-
-	list := []string{"1", "2", "3"}
-
-	fmt.Println(ContainFilter(list, func(index int, item string) bool {
-		return item == "2"
-	}))
-
-	fmt.Println(ContainFilter(list, func(index int, item string) bool {
-		return item == "4"
-	}))
-
-	// Output:
-	// true
-	// false
-}
-
 func ExampleContainAll() {
 
 	list := []string{"1", "2", "3"}
@@ -460,36 +443,11 @@ func ExampleFindDuplicates() {
 
 }
 
-func ExampleFindDuplicatesBy() {
-
-	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-
-	fmt.Println(FindDuplicatesBy(list, func(index int, item int) string {
-		return strconv.Itoa(item)
-	}))
-
-	// Output:
-	// [3 3 5]
-
-}
-
 func ExampleFindUniqueDuplicates() {
 
 	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
 
 	fmt.Println(FindUniqueDuplicates(list))
-
-	// Output:
-	// [3 5]
-}
-
-func ExampleFindUniqueDuplicatesBy() {
-
-	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-
-	fmt.Println(FindUniqueDuplicatesBy(list, func(index int, item int) string {
-		return strconv.Itoa(item)
-	}))
 
 	// Output:
 	// [3 5]
@@ -562,28 +520,6 @@ func ExampleMin() {
 	// 2
 }
 
-func ExampleMinFilter() {
-
-	list := []string{"ss12", "xs2", "xx2"}
-	fmt.Println(MinFilter(list, func(index int, item string, max string) bool {
-		if item == "xs2" {
-			return item > max
-		}
-
-		return item < max
-	}))
-
-	list2 := []int{5, 2, 111, 3}
-
-	fmt.Println(MinFilter(list2, func(index int, item int, max int) bool {
-		return item < max
-	}))
-
-	// Output:
-	// xs2
-	// 2
-}
-
 func ExampleMax() {
 
 	list := []string{"1", "2", "3"}
@@ -594,30 +530,6 @@ func ExampleMax() {
 
 	// Output:
 	// 3
-	// 111
-
-}
-
-func ExampleMaxFilter() {
-
-	list := []string{"ss12", "xs2", "xx2"}
-
-	fmt.Println(MaxFilter(list, func(index int, item string, max string) bool {
-		if item == "xs2" {
-			return item < max
-		}
-
-		return item > max
-	}))
-
-	list2 := []int{5, 2, 111, 3}
-
-	fmt.Println(MaxFilter(list2, func(index int, item int, max int) bool {
-		return item > max
-	}))
-
-	// Output:
-	// xx2
 	// 111
 
 }

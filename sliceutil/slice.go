@@ -1,4 +1,4 @@
-// Package sliceutil provides some useful methods for the slice.
+// Package sliceutil slice相关函数
 package sliceutil
 
 import (
@@ -7,14 +7,14 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-// ForEach iterates over a slice and calls the iteratee for each item.
+// ForEach 遍历切片并为每个元素调用"iteratee"函数。
 func ForEach[T any](list []T, iteratee func(index int, item T)) {
 	for i, item := range list {
 		iteratee(i, item)
 	}
 }
 
-// ForEachWithBreak iterates over a slice and calls the iteratee for each item until iteratee return false.
+// ForEachWithBreak 遍历切片并为每个元素调用"iteratee"函数，如果返回"false"，则停止遍历。
 func ForEachWithBreak[T any](list []T, iteratee func(index int, item T) bool) {
 	for i, v := range list {
 		if !iteratee(i, v) {
@@ -23,9 +23,9 @@ func ForEachWithBreak[T any](list []T, iteratee func(index int, item T) bool) {
 	}
 }
 
-// Filter iterates over elements of a slice, returning an array of all elements predicate returns truthy for.
-func Filter[V any](list []V, iteratee func(index int, item V) bool) []V {
-	result := make([]V, 0, len(list))
+// Filter 遍历切片并为每个元素调用"iteratee"函数，只返回调用结果为true的元素。
+func Filter[T any](list []T, iteratee func(index int, item T) bool) []T {
+	result := make([]T, 0, len(list))
 
 	for i, item := range list {
 		if iteratee(i, item) {
@@ -36,7 +36,7 @@ func Filter[V any](list []V, iteratee func(index int, item V) bool) []V {
 	return result
 }
 
-// Map return a slice with the results of calling a provided function on every element in the calling slice.
+// Map 遍历切片并为每个元素调用"iteratee"函数，并返回调用后结果。
 func Map[T, U any](list []T, iteratee func(index int, item T) U) []U {
 	result := make([]U, len(list))
 
@@ -47,7 +47,7 @@ func Map[T, U any](list []T, iteratee func(index int, item T) U) []U {
 	return result
 }
 
-// Contain checks if a slice contains a value.
+// Contain 效验切片是否包含目标元素。
 func Contain[T comparable](list []T, target T) bool {
 	for _, item := range list {
 		if item == target {
@@ -58,20 +58,9 @@ func Contain[T comparable](list []T, target T) bool {
 	return false
 }
 
-// ContainFilter returns true if iteratee function return true.
-func ContainFilter[T any](list []T, iteratee func(index int, item T) bool) bool {
-	for i, item := range list {
-		if iteratee(i, item) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// ContainAll checks if a slice contains all values.
-func ContainAll[T comparable](list []T, sub ...T) bool {
-	if len(sub) == 0 {
+// ContainAll 效验切片是否包含所有的目标元素。
+func ContainAll[T comparable](list []T, targets ...T) bool {
+	if len(targets) == 0 {
 		return true
 	}
 
@@ -84,7 +73,7 @@ func ContainAll[T comparable](list []T, sub ...T) bool {
 		exist[v] = struct{}{}
 	}
 
-	for _, v := range sub {
+	for _, v := range targets {
 		if _, ok := exist[v]; !ok {
 			return false
 		}
@@ -93,7 +82,7 @@ func ContainAll[T comparable](list []T, sub ...T) bool {
 	return true
 }
 
-// FilterMap return a slice with the results of calling a provided function on every element in the calling slice.
+// FilterMap 遍历切片并为每个元素调用"iteratee"函数，如果调用结果为true，则返回调用后元素。
 func FilterMap[T, U any](list []T, iteratee func(index int, item T) (U, bool)) []U {
 	result := make([]U, 0, len(list))
 
@@ -106,7 +95,7 @@ func FilterMap[T, U any](list []T, iteratee func(index int, item T) (U, bool)) [
 	return result
 }
 
-// AppendIfNotDuplicate appends an item to a slice if it does not already exist.
+// AppendIfNotDuplicate 添加元素到切片，如果元素已经存在，则不添加。
 func AppendIfNotDuplicate[T comparable](list []T, item T) []T {
 	if !Contain(list, item) {
 		list = append(list, item)
@@ -115,7 +104,7 @@ func AppendIfNotDuplicate[T comparable](list []T, item T) []T {
 	return list
 }
 
-// AppendMultipleIfNotDuplicate appends multiple items to a slice if it does not already exist.
+// AppendMultipleIfNotDuplicate 添加多个元素到切片，如果元素已经存在，则不添加。
 func AppendMultipleIfNotDuplicate[T comparable](list []T, items ...T) []T {
 	if len(items) == 0 {
 		return list
@@ -136,7 +125,7 @@ func AppendMultipleIfNotDuplicate[T comparable](list []T, items ...T) []T {
 	return list
 }
 
-// Remove removes the first occurrence of the target from the slice.
+// Remove 从切片中删除元素。
 func Remove[T comparable](list []T, items ...T) []T {
 	if len(list) == 0 || len(items) == 0 {
 		return list
@@ -157,7 +146,7 @@ func Remove[T comparable](list []T, items ...T) []T {
 	return result
 }
 
-// RemoveFilter removes the first occurrence from the result of the iteratee function.
+// RemoveFilter 遍历切片并为每个元素调用"iteratee"函数，如果调用结果为true，则删除该元素。
 func RemoveFilter[T comparable](list []T, iteratee func(index int, item T) bool) []T {
 	if len(list) == 0 {
 		return list
@@ -174,7 +163,7 @@ func RemoveFilter[T comparable](list []T, iteratee func(index int, item T) bool)
 	return result
 }
 
-// Unique returns a slice with unique values.
+// Unique 去重。
 func Unique[T comparable](list []T) []T {
 	result := make([]T, 0, len(list))
 	exist := make(map[T]struct{}, len(list))
@@ -189,7 +178,7 @@ func Unique[T comparable](list []T) []T {
 	return result
 }
 
-// UniqueBy returns a slice with unique elements from the result of the iteratee function.
+// UniqueBy 遍历切片并为每个元素调用"iteratee"函数，返回唯一的元素。
 func UniqueBy[T, U comparable](list []T, iteratee func(index int, item T) U) []U {
 	result := make([]U, 0, len(list))
 	seen := make(map[U]struct{}, len(list))
@@ -208,7 +197,7 @@ func UniqueBy[T, U comparable](list []T, iteratee func(index int, item T) U) []U
 	return result
 }
 
-// UniqueNonzero returns a slice with unique non-zero elements from the original slice.
+// UniqueNonzero 删除重复元素及零值。
 func UniqueNonzero[T comparable](list []T) []T {
 	result := make([]T, 0, len(list))
 	exist := make(map[T]struct{}, len(list))
@@ -228,7 +217,7 @@ func UniqueNonzero[T comparable](list []T) []T {
 	return result
 }
 
-// UniqueNonzeroBy returns a slice with unique non-zero elements from the result of the iteratee function.
+// UniqueNonzeroBy 遍历切片并为每个元素调用"iteratee"函数，返回唯一的、非零值的元素。
 func UniqueNonzeroBy[T, U comparable](list []T, iteratee func(index int, item T) U) []U {
 	result := make([]U, 0, len(list))
 	seen := make(map[U]struct{}, len(list))
@@ -253,7 +242,7 @@ func UniqueNonzeroBy[T, U comparable](list []T, iteratee func(index int, item T)
 	return result
 }
 
-// Nonzero returns a slice with non-zero elements from the original slice.
+// Nonzero 删除零值。
 func Nonzero[T comparable](list []T) []T {
 	var zero T
 
@@ -268,8 +257,12 @@ func Nonzero[T comparable](list []T) []T {
 	return result
 }
 
-// Replace replaces the first n occurrences of old with new.
+// Replace 将切片中的元素"old"替换为"new"，最多替换"n"次，如果"n"为-1，则替换所有的"old"元素。
 func Replace[T comparable](list []T, old T, new T, n int) []T {
+	if n == 0 {
+		return list
+	}
+
 	result := make([]T, len(list))
 	copy(result, list)
 
@@ -283,13 +276,12 @@ func Replace[T comparable](list []T, old T, new T, n int) []T {
 	return result
 }
 
-// ReplaceAll replaces all occurrences of old with new.
+// ReplaceAll 将切片中的元素"old"替换为"new"，替换所有的"old"元素。
 func ReplaceAll[T comparable](list []T, old T, new T) []T {
 	return Replace(list, old, new, -1)
 }
 
-// Difference returns the difference between two slices.
-// Note: This method does not remove duplicate elements from the result.
+// Difference 差集，结果不去重。
 func Difference[T comparable](list1, list2 []T) []T {
 
 	if len(list1) == 0 {
@@ -328,8 +320,7 @@ func Difference[T comparable](list1, list2 []T) []T {
 	return result
 }
 
-// DifferenceUnique returns the difference between two slices.
-// Note: This method removes duplicate elements from the result.
+// DifferenceUnique 差集，结果去重。
 func DifferenceUnique[T comparable](list1, list2 []T) []T {
 
 	if len(list1) == 0 {
@@ -370,8 +361,7 @@ func DifferenceUnique[T comparable](list1, list2 []T) []T {
 	return result
 }
 
-// Intersection returns the intersection between two slices.
-// Note: This method removes duplicate elements from the result.
+// Intersection 交集，结果元素唯一。
 func Intersection[T comparable](list1, list2 []T) []T {
 	if len(list1) == 0 || len(list2) == 0 {
 		return []T{}
@@ -394,10 +384,9 @@ func Intersection[T comparable](list1, list2 []T) []T {
 	return result
 }
 
-// MutualDifference returns the mutual difference between two slices.
-// The first value is the collection of elements absent of list2.
-// The second value is the collection of elements absent of list1.
-// Note: This method does not remove duplicate elements from the result.
+// MutualDifference 差异，结果不去重。
+// 返回1："list1"中存在，"list2"中不存在。
+// 返回2："list2"中存在，"list1"中不存在。
 func MutualDifference[T comparable](list1, list2 []T) ([]T, []T) {
 	if len(list1) == 0 {
 		return []T{}, list2
@@ -436,7 +425,7 @@ func MutualDifference[T comparable](list1, list2 []T) ([]T, []T) {
 	return left, right
 }
 
-// ToMapBy converts a slice to a map by the given key function.
+// ToMapBy 遍历切片，将切片中的元素转换为map的key和value。
 func ToMapBy[T any, K comparable, V any](list []T, iteratee func(index int, item T) (K, V)) map[K]V {
 	result := make(map[K]V, len(list))
 
@@ -448,7 +437,7 @@ func ToMapBy[T any, K comparable, V any](list []T, iteratee func(index int, item
 	return result
 }
 
-// Repeat returns a slice consisting of n copies of item.
+// Repeat 返回包含"n"个"item"的切片。
 func Repeat[T any](item T, n int) []T {
 	if n <= 0 {
 		return []T{}
@@ -463,7 +452,7 @@ func Repeat[T any](item T, n int) []T {
 	return result
 }
 
-// Equal returns true if the slices have the same length, element order and values are the same.
+// Equal 长度、顺序、值都相等时返回"true"。
 func Equal[T comparable](list1, list2 []T) bool {
 	if len(list1) != len(list2) {
 		return false
@@ -478,7 +467,7 @@ func Equal[T comparable](list1, list2 []T) bool {
 	return true
 }
 
-// EqualElement returns true if the slices have the same length and values are the same(regardless of order).
+// EqualElement 长度、值相等时返回"true"，不考虑顺序。
 func EqualElement[T comparable](list1 []T, list2 []T) bool {
 	if len(list1) != len(list2) {
 		return false
@@ -505,7 +494,7 @@ func EqualElement[T comparable](list1 []T, list2 []T) bool {
 	return true
 }
 
-// FindIndex returns the index the first occurrence of the target in the slice, or -1 if there is no match.
+// FindIndex 返回第一个匹配的元素的索引，不存在则返回"-1"。
 func FindIndex[T comparable](list []T, target T) int {
 	for i, item := range list {
 		if item == target {
@@ -516,7 +505,7 @@ func FindIndex[T comparable](list []T, target T) int {
 	return -1
 }
 
-// FindIndexFilter returns the index of the first element in the slice that the iteratee function returns true, or -1 if there is no match.
+// FindIndexFilter 返回调用"iteratee"函数返回"true"的第一个元素的索引，不存在则返回"-1"。
 func FindIndexFilter[T any](list []T, iteratee func(index int, item T) bool) int {
 	for i, item := range list {
 		if iteratee(i, item) {
@@ -527,8 +516,7 @@ func FindIndexFilter[T any](list []T, iteratee func(index int, item T) bool) int
 	return -1
 }
 
-// FindDuplicates returns a slice with all the duplicate elements of the list.
-// Note: This method does not remove duplicate elements from the result.
+// FindDuplicates 返回切片中所有重复的元素，结果不去重。
 func FindDuplicates[T comparable](list []T) []T {
 	exist := make(map[T]struct{}, len(list))
 	result := make([]T, 0, len(list))
@@ -544,26 +532,7 @@ func FindDuplicates[T comparable](list []T) []T {
 	return result
 }
 
-// FindDuplicatesBy returns a slice with all the duplicate elements from the result of the iteratee function.
-func FindDuplicatesBy[T, U comparable](list []T, iteratee func(index int, item T) U) []U {
-	exist := make(map[U]struct{}, len(list))
-	result := make([]U, 0, len(list))
-
-	for i, item := range list {
-		key := iteratee(i, item)
-
-		if _, ok := exist[key]; ok {
-			result = append(result, key)
-		} else {
-			exist[key] = struct{}{}
-		}
-	}
-
-	return result
-}
-
-// FindUniqueDuplicates returns a slice with all the unique duplicate elements of the slice.
-// Note: This method removes duplicate elements from the result.
+// FindUniqueDuplicates 返回切片中所有重复的元素，结果去重。
 func FindUniqueDuplicates[T comparable](list []T) []T {
 	exist := make(map[T]int, len(list))
 	result := make([]T, 0, len(list))
@@ -580,27 +549,9 @@ func FindUniqueDuplicates[T comparable](list []T) []T {
 	return result
 }
 
-// FindUniqueDuplicatesBy returns a slice with all the unique duplicate elements from the result of the iteratee function.
-func FindUniqueDuplicatesBy[T, U comparable](list []T, iteratee func(index int, item T) U) []U {
-	exist := make(map[U]int, len(list))
-	result := make([]U, 0, len(list))
-
-	for i, item := range list {
-		key := iteratee(i, item)
-
-		c, ok := exist[key]
-
-		if ok && c == 1 {
-			result = append(result, key)
-		}
-		exist[key]++
-	}
-
-	return result
-}
-
-// Shuffle returns randomly shuffle the elements in the given slice.
-// Note: Before using the Shuffle function, make sure to call rand.Seed in your program's initialization code.
+// Shuffle 打乱切片中元素的顺序。
+//
+// 注意：在使用Shuffle函数之前，请确保在程序的初始化代码中调用了rand.Seed。
 func Shuffle[T any](list []T) []T {
 	rand.Shuffle(len(list), func(i, j int) {
 		list[i], list[j] = list[j], list[i]
@@ -609,8 +560,9 @@ func Shuffle[T any](list []T) []T {
 	return list
 }
 
-// Sample returns a random item from slice.
-// Note: Before using the Sample function, make sure to call rand.Seed in your program's initialization code.
+// Sample 从切片中随机返回一个元素。
+//
+// 注意：在使用Sample函数之前，请确保在程序的初始化代码中调用了rand.Seed。
 func Sample[T any](list []T) T {
 	var zero T
 
@@ -621,12 +573,13 @@ func Sample[T any](list []T) T {
 	return list[rand.Intn(len(list))]
 }
 
-// Samples returns N random items from slice.
-// Note1: If n is greater than the length of the slice, the entire slice after randomization is returned.
-// Note2: If there are duplicates in the slice, the returned one may also have duplicates.
+// Samples 从切片中随机返回n个元素，结果不去重。
+// 如果"n"大于切片的长度，则返回打乱顺序后的切片，如果"n"小于等于0，则返回空切片。
+//
+// 注意：在使用Samples函数之前，请确保在程序的初始化代码中调用了rand.Seed。
 func Samples[T any](list []T, n int) []T {
 	if n <= 0 {
-		return list
+		return []T{}
 	}
 
 	newList := make([]T, len(list))
@@ -641,7 +594,7 @@ func Samples[T any](list []T, n int) []T {
 	return newList[:n]
 }
 
-// Min returns the minimum value of a slice.
+// Min 返回最小值
 func Min[T constraints.Ordered](list []T) T {
 	var min T
 
@@ -660,27 +613,7 @@ func Min[T constraints.Ordered](list []T) T {
 	return min
 }
 
-// MinFilter returns the minimum value of a slice using the given iteratee function.
-func MinFilter[T any](list []T, iteratee func(index int, item T, max T) bool) T {
-	var min T
-
-	if len(list) == 0 {
-		return min
-	}
-
-	min = list[0]
-
-	for i := 1; i < len(list); i++ {
-
-		if iteratee(i, list[i], min) {
-			min = list[i]
-		}
-	}
-
-	return min
-}
-
-// Max searches the maximum value of a slice.
+// Max 返回最大值
 func Max[T constraints.Ordered](list []T) T {
 	var max T
 
@@ -700,28 +633,7 @@ func Max[T constraints.Ordered](list []T) T {
 	return max
 }
 
-// MaxFilter search the maximum value of a slice using the given iteratee function.
-func MaxFilter[T any](list []T, iteratee func(index int, item T, max T) bool) T {
-	var max T
-
-	if len(list) == 0 {
-		return max
-	}
-
-	max = list[0]
-
-	for i := 1; i < len(list); i++ {
-
-		if iteratee(i, list[i], max) {
-			max = list[i]
-		}
-	}
-
-	return max
-}
-
-// Drop returns a slice with n elements dropped from the start.
-// Note: if "n" is greater than the length of the slice, an empty slice is returned.
+// Drop 返回从开头删除n个元素的切片，如果"n"大于切片的长度，则返回空切片。
 func Drop[T any](list []T, n int) []T {
 	if n <= 0 {
 		return list
@@ -734,8 +646,7 @@ func Drop[T any](list []T, n int) []T {
 	return list[n:]
 }
 
-// DropLast returns a slice with n elements dropped from the end.
-// Note: if "n" is greater than the length of the slice, an empty slice is returned.
+// DropLast 返回从末尾删除n个元素的切片，如果"n"大于切片的长度，则返回空切片。
 func DropLast[T any](list []T, n int) []T {
 	if n <= 0 {
 		return list
@@ -748,7 +659,7 @@ func DropLast[T any](list []T, n int) []T {
 	return list[:len(list)-n]
 }
 
-// Slice Returns a slice from "n" to "m" but not including "m". Like "slice[n:m]", but doesn't panic on overflow
+// Slice 返回索引从"n"到"m"的切片，但不包括"m"，类似于"slice[n:m]"，但不会在溢出时panic。
 func Slice[T any](list []T, n, m int) []T {
 
 	if n >= m {
@@ -766,7 +677,7 @@ func Slice[T any](list []T, n, m int) []T {
 	return list[n:m]
 }
 
-// IsSorted checks if a slice is sorted.
+// IsSorted 判断切片是否已排序。
 func IsSorted[T constraints.Ordered](list []T) bool {
 	for i := 1; i < len(list); i++ {
 		if list[i-1] > list[i] {
@@ -777,7 +688,7 @@ func IsSorted[T constraints.Ordered](list []T) bool {
 	return true
 }
 
-// IsSortedBy checks if a slice is sorted by iteratee.
+// IsSortedBy 遍历切片并为每个元素调用"iteratee"函数，以确定它是否已排序。
 func IsSortedBy[T any, K constraints.Ordered](list []T, iteratee func(item T) K) bool {
 	size := len(list)
 
@@ -790,14 +701,14 @@ func IsSortedBy[T any, K constraints.Ordered](list []T, iteratee func(item T) K)
 	return true
 }
 
-// Reverse reverses a slice.
+// Reverse 将切片中的元素顺序反转。
 func Reverse[T any](slice []T) {
 	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {
 		slice[i], slice[j] = slice[j], slice[i]
 	}
 }
 
-// Flatten flattens a slice of slices.
+// Flatten 将二维切片转换为一维切片。
 func Flatten[T any](collection [][]T) []T {
 	var result []T
 	for i := range collection {
@@ -807,9 +718,7 @@ func Flatten[T any](collection [][]T) []T {
 	return result
 }
 
-// InsertAt inserts values into a slice at the specified index.
-// Note: if the index is greater than the length of the slice or less than 0,
-// the values are appended to the end of the slice.
+// InsertAt 在切片的指定索引处插入值，如果索引大于切片的长度或小于 0，则将值附加到切片的末尾。
 func InsertAt[T any](slice []T, index int, value ...T) []T {
 	if len(value) == 0 {
 		return slice

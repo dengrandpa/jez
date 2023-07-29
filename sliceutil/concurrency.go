@@ -4,7 +4,7 @@ import (
 	"sync"
 )
 
-// ParallelForEach Executes parallel iterator functions on each element in the slice.
+// ParallelForEach 遍历切片并对每个元素并行调用"iteratee"函数。
 func ParallelForEach[T any](list []T, iteratee func(index int, item T)) {
 	if len(list) == 0 {
 		return
@@ -24,15 +24,14 @@ func ParallelForEach[T any](list []T, iteratee func(index int, item T)) {
 	wg.Wait()
 }
 
-// ConcurrentForEach Executes concurrent iterator functions on each element in the slice.
+// ConcurrentForEach 遍历切片并对每个元素并发调用"iteratee"函数。
 func ConcurrentForEach[T any](list []T, iteratee func(index int, item T)) {
 	for i, item := range list {
 		go iteratee(i, item)
 	}
 }
 
-// ParallelMap Returns a slice containing the results of parallel calls to the provided function on each element in the called slice.
-// Note: The order of the results is not guaranteed.
+// ParallelMap 遍历切片并对每个元素并行调用"iteratee"函数，返回一个包含每次调用结果的切片。
 func ParallelMap[T, U any](list []T, iteratee func(index int, item T) U) []U {
 	if len(list) == 0 {
 		return []U{}
@@ -55,8 +54,7 @@ func ParallelMap[T, U any](list []T, iteratee func(index int, item T) U) []U {
 	return result
 }
 
-// ConcurrentMap Returns a slice containing the results of concurrent calls to the provided function on each element in the called slice.
-// Note: The order of the results is not guaranteed.
+// ConcurrentMap 遍历切片并对每个元素并发调用"iteratee"函数，返回一个包含每次调用结果的切片。
 func ConcurrentMap[T, U any](list []T, iteratee func(index int, item T) U) []U {
 	if len(list) == 0 {
 		return []U{}

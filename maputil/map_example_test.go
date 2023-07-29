@@ -249,7 +249,7 @@ func ExampleMapToSliceFilter() {
 	// [b 2 d 4]
 }
 
-func ExampleDeleteByKeys() {
+func ExampleDeletes() {
 
 	m := map[string]int{
 		"a": 1,
@@ -259,7 +259,7 @@ func ExampleDeleteByKeys() {
 		"e": 5,
 		"f": 1,
 	}
-	DeleteByKeys(m, "a", "b")
+	Deletes(m, "a", "b")
 
 	fmt.Println(m)
 
@@ -283,24 +283,6 @@ func ExampleDeleteByValues() {
 
 	// Output:
 	// map[c:3 d:4 e:5]
-}
-
-func ExampleDeleteByValue() {
-
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-	}
-	DeleteByValue(m, 1)
-
-	fmt.Println(m)
-
-	// Output:
-	// map[b:2 c:3 d:4 e:5]
 }
 
 func ExampleDeleteFilter() {

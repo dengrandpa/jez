@@ -1,15 +1,18 @@
-// Package fileutil provides some file utility functions.
+// Package fileutil 文件相关函数
 package fileutil
 
 import (
+	"archive/zip"
+	"bufio"
 	"errors"
+	"io"
 	"os"
 	"path/filepath"
 )
 
 var walkFind = errors.New("find")
 
-// removes sorting of os.ReadDir.
+// 等同于 "os.ReadDir"， 删除了排序
 func osReadDir(dirPath string) ([]os.DirEntry, error) {
 	f, err := os.Open(dirPath)
 	if err != nil {
@@ -20,7 +23,44 @@ func osReadDir(dirPath string) ([]os.DirEntry, error) {
 	return f.ReadDir(-1)
 }
 
-// IsDir determines whether the path is a directory.
+// FilterMap 遍历当前目录，对每个文件调用 "iteratee"，如果返回 "true"，则将结果放入结果集中
+func FilterMap[T any](dirPath string, iteratee func(entry os.DirEntry) (T, bool)) ([]T, error) {
+	entries, err := osReadDir(dirPath)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]T, 0, len(entries))
+
+	for _, entry := range entries {
+		if r, ok := iteratee(entry); ok {
+			result = append(result, r)
+		}
+	}
+
+	return result, nil
+}
+
+// FilterMapRecursively 递归遍历所有目录，对每个文件调用 "iteratee"，如果返回 "true"，则将结果放入结果集中
+func FilterMapRecursively[T any](dirPath string, iteratee func(path string, d os.DirEntry) (T, bool)) ([]T, error) {
+
+	var result []T
+
+	err := filepath.WalkDir(dirPath, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if r, ok := iteratee(path, d); ok {
+			result = append(result, r)
+		}
+		return nil
+	})
+
+	return result, err
+}
+
+// IsDir 判断是否是目录
 func IsDir(dirPath string) (bool, error) {
 	info, err := os.Stat(dirPath)
 	if err != nil {
@@ -29,7 +69,7 @@ func IsDir(dirPath string) (bool, error) {
 	return info.IsDir(), nil
 }
 
-// IsEmptyDir determines whether the directory is empty.
+// IsEmptyDir 判断目录是否为空
 func IsEmptyDir(dirPath string) (bool, error) {
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
@@ -39,7 +79,7 @@ func IsEmptyDir(dirPath string) (bool, error) {
 	return len(entries) == 0, nil
 }
 
-// FileExists determines whether the file exists.
+// FileExists 判断文件是否存在
 func FileExists(filePath string) (bool, error) {
 	isDir, err := IsDir(filePath)
 	if err != nil {
@@ -51,7 +91,7 @@ func FileExists(filePath string) (bool, error) {
 	return !isDir, nil
 }
 
-// DirExists determines whether the directory exists.
+// DirExists 判断目录是否存在
 func DirExists(dirPath string) (bool, error) {
 	isDir, err := IsDir(dirPath)
 	if err != nil {
@@ -63,10 +103,15 @@ func DirExists(dirPath string) (bool, error) {
 	return isDir, nil
 }
 
-// CreateFiles create files, ignore them if they exist.
+// OsCreate 等同于 "os.Create",创建文件，如果文件已存在，则忽略，使用完毕后需要关闭
+func OsCreate(filePath string) (*os.File, error) {
+	return os.Create(filePath)
+}
+
+// CreateFiles 创建文件，如果文件已存在，则忽略
 func CreateFiles(filePaths ...string) error {
 	for _, filePath := range filePaths {
-		file, err := os.Create(filePath)
+		file, err := OsCreate(filePath)
 		if err != nil {
 			return err
 		}
@@ -75,7 +120,7 @@ func CreateFiles(filePaths ...string) error {
 	return nil
 }
 
-// OverwriteFiles overwrite files, create them if they do not exist.
+// OverwriteFiles 创建文件，如果文件已存在，则覆盖
 func OverwriteFiles(filePaths ...string) error {
 	for _, filePath := range filePaths {
 		file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
@@ -88,7 +133,7 @@ func OverwriteFiles(filePaths ...string) error {
 	return nil
 }
 
-// CreateDirs create directory with Unix permission bits, 0o777.
+// CreateDirs 创建目录，包含子目录，如果目录已存在，则忽略
 func CreateDirs(dirPaths ...string) error {
 	for _, dirPath := range dirPaths {
 		if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
@@ -98,7 +143,7 @@ func CreateDirs(dirPaths ...string) error {
 	return nil
 }
 
-// CreateFilesWithDirs create files, ignore them if they exist.
+// CreateFilesWithDirs 创建文件，如果文件已存在，则忽略，同时创建目录，包含子目录
 func CreateFilesWithDirs(filePaths ...string) error {
 	for _, filePath := range filePaths {
 		if err := CreateDirs(filepath.Dir(filePath)); err != nil {
@@ -108,7 +153,7 @@ func CreateFilesWithDirs(filePaths ...string) error {
 	return CreateFiles(filePaths...)
 }
 
-// OverwriteFilesWithDirs overwrite files, create them if they do not exist.
+// OverwriteFilesWithDirs 创建文件，如果文件已存在，则覆盖，同时创建目录，包含子目录
 func OverwriteFilesWithDirs(filePaths ...string) error {
 	for _, filePath := range filePaths {
 		if err := CreateDirs(filepath.Dir(filePath)); err != nil {
@@ -118,7 +163,38 @@ func OverwriteFilesWithDirs(filePaths ...string) error {
 	return OverwriteFiles(filePaths...)
 }
 
-// FindFileRecursively recursively find files in the directory.
+// CreateFileWithData 创建文件并写入字符串数据
+func CreateFileWithData(filePath, data string) error {
+	file, err := OsCreate(filePath)
+	if err != nil {
+		return err
+	}
+
+	_, err = file.WriteString(data)
+	_ = file.Close()
+
+	return err
+}
+
+// CopyFile 拷贝文件
+func CopyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := OsCreate(dst)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
+	return err
+}
+
+// FindFileRecursively 递归查找文件
 func FindFileRecursively(dirPath, filename string) (bool, error) {
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
@@ -141,7 +217,7 @@ func FindFileRecursively(dirPath, filename string) (bool, error) {
 	return false, err
 }
 
-// FindFileRecursivelyFilter recursively find the iteratee function in the directory to return true filename.
+// FindFileRecursivelyFilter 递归查找文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则表示找到了
 func FindFileRecursivelyFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) (bool, error) {
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
@@ -164,7 +240,7 @@ func FindFileRecursivelyFilter(dirPath string, iteratee func(path string, entry 
 	return false, err
 }
 
-// Filenames get all file names in the directory.
+// Filenames 返回目录下的文件名切片
 func Filenames(dirPath string) ([]string, error) {
 	entries, err := osReadDir(dirPath)
 	if err != nil {
@@ -181,7 +257,7 @@ func Filenames(dirPath string) ([]string, error) {
 	return names, nil
 }
 
-// FilenamesFilter get the iteratee function in the directory to return true filename.
+// FilenamesFilter 遍历目录下的文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则将文件名添加到切片中
 func FilenamesFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) ([]string, error) {
 	entries, err := osReadDir(dirPath)
 	if err != nil {
@@ -197,7 +273,7 @@ func FilenamesFilter(dirPath string, iteratee func(path string, entry os.DirEntr
 	return names, nil
 }
 
-// FilenamesBy get the iteratee function in the directory to return filename.
+// FilenamesBy 遍历目录下的文件，对每个文件调用 "iteratee" 函数，将返回的字符串添加到切片中
 func FilenamesBy(dirPath string, iteratee func(path string, entry os.DirEntry) string) ([]string, error) {
 	entries, err := osReadDir(dirPath)
 	if err != nil {
@@ -213,7 +289,7 @@ func FilenamesBy(dirPath string, iteratee func(path string, entry os.DirEntry) s
 	return names, nil
 }
 
-// FilenamesRecursively recursively get all file names in the directory.
+// FilenamesRecursively 返回目录下的文件名切片，包含子目录下的
 func FilenamesRecursively(dirPath string) ([]string, error) {
 	var names []string
 
@@ -233,7 +309,7 @@ func FilenamesRecursively(dirPath string) ([]string, error) {
 	return names, err
 }
 
-// FilenamesRecursivelyFilter recursively get the iteratee function in the directory to return true filename.
+// FilenamesRecursivelyFilter 递归遍历目录下的文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则将文件名添加到切片中
 func FilenamesRecursivelyFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) ([]string, error) {
 	var names []string
 
@@ -253,7 +329,7 @@ func FilenamesRecursivelyFilter(dirPath string, iteratee func(path string, entry
 	return names, err
 }
 
-// FilenamesRecursivelyBy recursively get the iteratee function in the directory to return filename.
+// FilenamesRecursivelyBy 递归遍历目录下的文件，对每个文件调用 "iteratee" 函数，将返回的字符串添加到切片中
 func FilenamesRecursivelyBy(dirPath string, iteratee func(path string, entry os.DirEntry) string) ([]string, error) {
 	var names []string
 
@@ -273,7 +349,7 @@ func FilenamesRecursivelyBy(dirPath string, iteratee func(path string, entry os.
 	return names, err
 }
 
-// DeleteFiles delete the file.
+// DeleteFiles 删除文件
 func DeleteFiles(filePaths ...string) error {
 	for _, filePath := range filePaths {
 		if err := os.Remove(filePath); err != nil {
@@ -283,7 +359,7 @@ func DeleteFiles(filePaths ...string) error {
 	return nil
 }
 
-// DeleteDirs delete the directory.
+// DeleteDirs 删除目录
 func DeleteDirs(dirPaths ...string) error {
 	for _, dirPath := range dirPaths {
 		if err := os.RemoveAll(dirPath); err != nil {
@@ -293,36 +369,21 @@ func DeleteDirs(dirPaths ...string) error {
 	return nil
 }
 
-// DeleteEmptyDirRecursively recursively delete all empty directories.
-// Note: For example "/a/b" when "b" is deleted, if "a" is also an empty directory, it will also be deleted.
+// DeleteEmptyDirRecursively 递归删除空目录
+//
+// 注意：例如 "/a/b"，当删除 "b" 时，如果 "a" 也是一个空目录，也会被删除
 func DeleteEmptyDirRecursively(dirPath string) error {
 	_, err := DeleteRecursivelyBy(dirPath, nil, true)
 	return err
 }
 
-// DeleteRecursivelyBy is a recursive-deleted implementation.
-// It deletes files and directories recursively starting from the given directory path.
-// The fileDo function is called for each file encountered during the deletion process.
-// The fileDo function takes the file path and the os.DirEntry instance as parameters,
-// and returns whether the current directory has been deleted.
-// If an error occurs during deletion, return
-// If you want to delete an empty directory, be careful with the bool return value.
-// Incorrect bool return value may result in accidental deletion of a file or unsuccessful deletion of an empty directory.
+// DeleteRecursivelyBy 是一个递归删除实现，从给定的目录路径开始递归地删除文件和目录，对每个文件（不包括目录）调用"iteratee"函数。
 //
-// Parameters:
-// - dirPath: The path of the directory to delete recursively.
-// - fileDo: The function to be called for each file encountered during the deletion process.
-// It takes the file path and the os.DirEntry instance as parameters,
-// and returns a boolean value indicating whether the current directory has been deleted,
-// and an error, if any.
-// - withEmptyDir: Optional parameter to specify whether to delete empty directories.
-// If set to true, empty directories will be deleted.
-// If not provided or set to false, empty directories will not be deleted.
-//
-// Returns:
-// - bool: Whether the current directory has been deleted.
-// - error: An error if any occurred during the deletion process.
-func DeleteRecursivelyBy(dirPath string, iteratee func(path string, entry os.DirEntry) (bool, error), withEmptyDir ...bool) (bool, error) {
+// "iteratee" 函数接受文件（不包括目录）路径和 os.DirEntry 实例作为参数，并返回当前目录是否已被删除。
+// 如果要删除空目录，请注意 bool 返回值，错误的 bool 返回值可能导致文件意外删除或空目录删除失败。
+// "withEmptyDir" 参数用于指定是否删除空目录。
+func DeleteRecursivelyBy(
+	dirPath string, iteratee func(path string, entry os.DirEntry) (bool, error), withEmptyDir ...bool) (bool, error) {
 
 	var withEmpty bool
 	if len(withEmptyDir) > 0 {
@@ -334,7 +395,7 @@ func DeleteRecursivelyBy(dirPath string, iteratee func(path string, entry os.Dir
 		return false, err
 	}
 
-	// the number of remaining files in the current directory
+	// 当前目录中剩余文件的数量
 	num := len(entries)
 
 	for _, entry := range entries {
@@ -355,7 +416,7 @@ func DeleteRecursivelyBy(dirPath string, iteratee func(path string, entry os.Dir
 
 		} else {
 
-			// recursive subdirectories
+			// 递归子目录
 			if isDelete, err = DeleteRecursivelyBy(path, iteratee, withEmptyDir...); err != nil {
 				return false, err
 			}
@@ -371,4 +432,194 @@ func DeleteRecursivelyBy(dirPath string, iteratee func(path string, entry os.Dir
 	}
 
 	return true, DeleteDirs(dirPath)
+}
+
+// Zip 将目录或文件压缩为 zip 文件，如果zip已存在，则会被覆盖。
+func Zip(src, dst string) error {
+	zipFile, err := OsCreate(dst)
+	if err != nil {
+		return err
+	}
+	defer zipFile.Close()
+
+	zipWriter := zip.NewWriter(zipFile)
+	defer zipWriter.Close()
+
+	return filepath.WalkDir(src, func(path string, info os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// 在 zip 文件中创建文件或目录
+		zipPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+
+		// 如果是目录，则创建目录
+		if info.IsDir() {
+			_, err = zipWriter.Create(zipPath + "/")
+			if err != nil {
+				return err
+			}
+		} else {
+			// 如果是文件，则创建文件并将文件内容写入 zip 文件
+			var file *os.File
+			if file, err = os.Open(path); err != nil {
+				return err
+			}
+			defer file.Close()
+
+			var writer io.Writer
+			if writer, err = zipWriter.Create(zipPath); err != nil {
+				return err
+			}
+
+			if _, err = io.Copy(writer, file); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
+
+// ZipFilter 对每个文件或目录调用 "iteratee" 函数，如果返回 true，则将其压缩到 zip 文件中，如果zip文件已存在，则会被覆盖。
+func ZipFilter(src, dst string, iteratee func(path string, entry os.DirEntry) bool) error {
+	zipFile, err := OsCreate(dst)
+	if err != nil {
+		return err
+	}
+	defer zipFile.Close()
+
+	zipWriter := zip.NewWriter(zipFile)
+	defer zipWriter.Close()
+
+	return filepath.WalkDir(src, func(path string, info os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !iteratee(path, info) {
+			return nil
+		}
+
+		// 在 zip 文件中创建文件或目录
+		zipPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+
+		// 如果是文件，则创建文件并将文件内容写入 zip 文件
+		if info.IsDir() {
+			_, err = zipWriter.Create(zipPath + "/")
+			if err != nil {
+				return err
+			}
+		} else {
+			// 如果是文件，则创建文件并将文件内容写入 zip 文件
+			var file *os.File
+			if file, err = os.Open(path); err != nil {
+				return err
+			}
+			defer file.Close()
+
+			var writer io.Writer
+			if writer, err = zipWriter.Create(zipPath); err != nil {
+				return err
+			}
+
+			if _, err = io.Copy(writer, file); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+}
+
+// Unzip 解压 zip 文件到指定目录，如果目录不存在，则会被创建。
+func Unzip(src, dst string) error {
+
+	reader, err := zip.OpenReader(src)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	// 遍历 zip 文件中的每个文件/目录
+	for _, file := range reader.File {
+		// 构建解压文件路径
+		extractedFilePath := filepath.Join(dst, file.Name)
+
+		if file.FileInfo().IsDir() {
+			if err = CreateDirs(extractedFilePath); err != nil {
+				return err
+			}
+		} else {
+			if err = CreateDirs(filepath.Dir(extractedFilePath)); err != nil {
+				return err
+			}
+
+			var zFile io.ReadCloser
+			if zFile, err = file.Open(); err != nil {
+				return err
+			}
+			defer zFile.Close()
+
+			var extractedFile *os.File
+			extractedFile, err = os.OpenFile(extractedFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+			if err != nil {
+				return err
+			}
+			defer extractedFile.Close()
+
+			_, err = io.Copy(extractedFile, zFile)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ReadAll 将文件的所有内容读取为字符串。
+func ReadAll(filePath string) (string, error) {
+	b, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+// ReadLine 读取文件的前"n"行，如果 "n" < 0，则读取所有行。
+func ReadLine(filePath string, n int) ([]string, error) {
+	if n == 0 {
+		return []string{}, nil
+	}
+
+	f, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+		n--
+
+		if n == 0 {
+			break
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return lines, nil
 }

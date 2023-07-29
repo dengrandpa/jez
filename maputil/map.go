@@ -1,14 +1,14 @@
-// Package maputil provides some useful methods for the map.
+// Package maputil map相关函数
 package maputil
 
-// ForEach iterates over the map and calls the iteratee for each key/value pair.
+// ForEach 遍历map，对每个元素调用"iteratee"函数。
 func ForEach[K comparable, V any](m map[K]V, iteratee func(key K, value V)) {
 	for k, v := range m {
 		iteratee(k, v)
 	}
 }
 
-// Filter iterates over the map and calls the iteratee for each key/value pair.
+// Filter 遍历map，对每个元素调用"iteratee"函数，如果"iteratee"返回true，则将该元素添加到结果map中。
 func Filter[K comparable, V any](m map[K]V, iteratee func(key K, value V) bool) map[K]V {
 	result := make(map[K]V)
 
@@ -20,7 +20,7 @@ func Filter[K comparable, V any](m map[K]V, iteratee func(key K, value V) bool) 
 	return result
 }
 
-// Keys returns all keys of the map.
+// Keys 遍历map，将每个key添加到结果slice中。
 func Keys[K comparable, V any](m map[K]V) []K {
 	result := make([]K, 0, len(m))
 
@@ -31,7 +31,7 @@ func Keys[K comparable, V any](m map[K]V) []K {
 	return result
 }
 
-// KeysBy returns all keys of the map after applying the iteratee to each key.
+// KeysBy 遍历map，对每个元素调用"iteratee"函数，并返回调用后结果。
 func KeysBy[K comparable, V any](m map[K]V, iteratee func(item K) K) []K {
 	result := make([]K, 0, len(m))
 
@@ -42,7 +42,7 @@ func KeysBy[K comparable, V any](m map[K]V, iteratee func(item K) K) []K {
 	return result
 }
 
-// Values returns all values of the map.
+// Values 返回map中所有的value。
 func Values[K comparable, V any](m map[K]V) []V {
 	result := make([]V, 0, len(m))
 
@@ -53,7 +53,7 @@ func Values[K comparable, V any](m map[K]V) []V {
 	return result
 }
 
-// ValuesBy returns all values of the map after applying the iteratee to each value.
+// ValuesBy 遍历map，对每个元素调用"iteratee"函数，并返回调用后结果。
 func ValuesBy[K comparable, V any](m map[K]V, iteratee func(item V) V) []V {
 	result := make([]V, 0, len(m))
 
@@ -64,7 +64,7 @@ func ValuesBy[K comparable, V any](m map[K]V, iteratee func(item V) V) []V {
 	return result
 }
 
-// ValuesUnique returns all unique values of the map.
+// ValuesUnique 返回map中所有的value，结果去重。
 func ValuesUnique[K, V comparable](m map[K]V) []V {
 	result := make([]V, 0, len(m))
 	exist := make(map[V]struct{}, len(m))
@@ -79,7 +79,9 @@ func ValuesUnique[K, V comparable](m map[K]V) []V {
 	return result
 }
 
-// KeysAndValues returns all keys and values of the map.
+// KeysAndValues 返回map中所有的key和value。
+// 返回1: key。
+// 返回2: value。
 func KeysAndValues[K comparable, V any](m map[K]V) ([]K, []V) {
 	keys := make([]K, 0, len(m))
 	values := make([]V, 0, len(m))
@@ -92,7 +94,9 @@ func KeysAndValues[K comparable, V any](m map[K]V) ([]K, []V) {
 	return keys, values
 }
 
-// KeysAndValuesFilter returns all keys and values of the map after applying the iteratee to each key/value pair.
+// KeysAndValuesFilter 遍历map，对每个元素调用"iteratee"函数，如果"iteratee"返回true，则将该元素添加到结果slice中。
+// 返回1: key。
+// 返回2: value。
 func KeysAndValuesFilter[K comparable, V any](m map[K]V, iteratee func(key K, value V) bool) ([]K, []V) {
 	keys := make([]K, 0, len(m))
 	values := make([]V, 0, len(m))
@@ -107,18 +111,17 @@ func KeysAndValuesFilter[K comparable, V any](m map[K]V, iteratee func(key K, va
 	return keys, values
 }
 
-// DeleteByKeys deletes all keys from the map.
-func DeleteByKeys[K comparable, V any](m map[K]V, keys ...K) {
+// Deletes 通过key删除多个元素。
+func Deletes[K comparable, V any](m map[K]V, keys ...K) {
 	for _, k := range keys {
 		delete(m, k)
 	}
 }
 
-// DeleteByValues deletes all values from the map.
-// Note: This method will delete all values that satisfy the condition.
-func DeleteByValues[K, V comparable](m map[K]V, key ...V) {
+// DeleteByValues 通过value删除多个元素。
+func DeleteByValues[K, V comparable](m map[K]V, values ...V) {
 	for k, v := range m {
-		for _, item := range key {
+		for _, item := range values {
 			if v == item {
 				delete(m, k)
 				break
@@ -127,17 +130,7 @@ func DeleteByValues[K, V comparable](m map[K]V, key ...V) {
 	}
 }
 
-// DeleteByValue deletes the first value from the map.
-// Note: This method will delete all values that satisfy the condition.
-func DeleteByValue[K, V comparable](m map[K]V, item V) {
-	for k, v := range m {
-		if v == item {
-			delete(m, k)
-		}
-	}
-}
-
-// DeleteFilter deletes all key/value pairs from the map after applying the iteratee to each key/value pair.
+// DeleteFilter 遍历map，对每个元素调用"iteratee"函数，如果"iteratee"返回true，则删除该元素。
 func DeleteFilter[K comparable, V any](m map[K]V, iteratee func(key K, value V) bool) {
 	for k, v := range m {
 		if iteratee(k, v) {
@@ -146,7 +139,7 @@ func DeleteFilter[K comparable, V any](m map[K]V, iteratee func(key K, value V) 
 	}
 }
 
-// ReplaceValue replaces all values in the map.
+// ReplaceValue 替换所有value等于"old"的元素。
 func ReplaceValue[K, V comparable](m map[K]V, old, new V) {
 	for k, v := range m {
 		if v == old {
@@ -155,7 +148,7 @@ func ReplaceValue[K, V comparable](m map[K]V, old, new V) {
 	}
 }
 
-// MapToSliceBy returns a slice of the results of applying the iteratee to each key/value pair.
+// MapToSliceBy map转切片，遍历map，对每个元素调用"iteratee"函数，并返回调用后结果切片。
 func MapToSliceBy[K comparable, V any, R any](m map[K]V, iteratee func(key K, value V) R) []R {
 	result := make([]R, 0, len(m))
 
@@ -166,7 +159,7 @@ func MapToSliceBy[K comparable, V any, R any](m map[K]V, iteratee func(key K, va
 	return result
 }
 
-// MapToSliceFilter returns a slice of the results of applying the iteratee to each key/value pair.
+// MapToSliceFilter map转切片，遍历map，对每个元素调用"iteratee"函数，如果"iteratee"返回true，则将该元素添加到结果切片中。
 func MapToSliceFilter[K comparable, V any, R any](m map[K]V, iteratee func(key K, value V) (R, bool)) []R {
 	result := make([]R, 0, len(m))
 

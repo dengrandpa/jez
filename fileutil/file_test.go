@@ -10,6 +10,41 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFilterMap(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	path := "./testdata"
+
+	resInt, _ := FilterMap(path, func(entry os.DirEntry) (int, bool) {
+		if !entry.IsDir() {
+			return 1, true
+		}
+
+		return 0, false
+	})
+
+	ass.Equal([]int{1, 1}, resInt)
+
+}
+
+func TestFilterMapRecursively(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	path := "./"
+
+	resInt, _ := FilterMapRecursively(path, func(path string, entry os.DirEntry) (int, bool) {
+		if !entry.IsDir() {
+			return 1, true
+		}
+
+		return 0, false
+	})
+
+	ass.Equal([]int{1, 1, 1, 1, 1}, resInt)
+}
+
 func TestIsDir(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
@@ -72,6 +107,23 @@ func TestCreateFiles(t *testing.T) {
 
 	_ = DeleteFiles(paths...)
 
+}
+
+func TestCreateFileWithData(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	path := "./testdata/test-file-data.txt"
+
+	data := "test"
+
+	_ = CreateFileWithData(path, data)
+
+	data2, _ := ReadAll(path)
+
+	ass.Equal(data, data2)
+
+	_ = DeleteFiles(path)
 }
 
 func TestOverwriteFiles(t *testing.T) {
@@ -150,6 +202,37 @@ func TestOverwriteFilesWithDirs(t *testing.T) {
 	for _, path := range paths {
 		_ = DeleteDirs(filepath.Dir(path))
 	}
+}
+
+func TestCreateFileWithOS(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	path := "./testdata/test-file-createwithos.txt"
+
+	file, _ := OsCreate(path)
+
+	ass.FileExists(path)
+
+	file.Close()
+
+	_ = DeleteFiles(path)
+
+}
+
+func TestCopyFile(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	src := "./testdata/test-file-exist.txt"
+	dst := "./testdata/test-file-exist2.txt"
+
+	_ = CopyFile(src, dst)
+
+	ass.FileExists(dst)
+
+	_ = DeleteFiles(dst)
+
 }
 
 func TestFindFileRecursively(t *testing.T) {
@@ -347,4 +430,77 @@ func TestDeleteRecursivelyBy(t *testing.T) {
 	ass.NoDirExists(dirPath)
 
 	_ = DeleteDirs("./testdata/test-dir-delete")
+}
+
+func TestZip(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	target := "./testdata/test-file-zip.zip"
+
+	_ = Zip("./testdata", target)
+
+	ass.FileExists(target)
+}
+
+func TestZipFilter(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	target := "./testdata/test-file-zip.zip"
+
+	_ = ZipFilter("./testdata", target, func(path string, entry os.DirEntry) bool {
+		return entry.Name() != "test-file-zip.zip"
+	})
+
+	ass.FileExists(target)
+}
+
+func TestUnzip(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	src := "./testdata/test-file-zip.zip"
+
+	dst := "./testdata/unzip"
+
+	_ = Unzip(src, dst)
+
+	ass.DirExists(dst)
+
+	_ = DeleteDirs(dst)
+}
+
+func TestReadAll(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	path := "./testdata/test-file-data.txt"
+
+	data := "test"
+
+	_ = CreateFileWithData(path, data)
+
+	data2, _ := ReadAll(path)
+
+	ass.Equal(data, data2)
+
+	_ = DeleteFiles(path)
+}
+
+func TestReadLine(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	path := "./testdata/test-file-data.txt"
+
+	data := "test\ntest"
+
+	_ = CreateFileWithData(path, data)
+
+	data2, _ := ReadLine(path, 1)
+
+	ass.Equal([]string{"test"}, data2)
+
+	_ = DeleteFiles(path)
 }

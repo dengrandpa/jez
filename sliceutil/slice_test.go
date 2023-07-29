@@ -90,21 +90,6 @@ func TestContain(t *testing.T) {
 
 }
 
-func TestContainFilter(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	list := []string{"1", "2", "3"}
-
-	ass.Equal(true, ContainFilter(list, func(index int, item string) bool {
-		return item == "2"
-	}))
-
-	ass.Equal(false, ContainFilter(list, func(index int, item string) bool {
-		return item == "4"
-	}))
-}
-
 func TestContainAll(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
@@ -319,7 +304,7 @@ func TestMutualDifference(t *testing.T) {
 	ass.Equal([]int{0, 3}, add1)
 	ass.Equal([]int{7, 8}, del1)
 
-	list5 := []int{}
+	var list5 []int
 	list6 := []int{1, 2, 3}
 	add2, del2 := MutualDifference(list5, list6)
 
@@ -327,7 +312,7 @@ func TestMutualDifference(t *testing.T) {
 	ass.Equal(list6, del2)
 
 	list7 := []int{1, 2, 3}
-	list8 := []int{}
+	var list8 []int
 	add3, del3 := MutualDifference(list7, list8)
 	ass.Equal(list6, add3)
 	ass.Equal([]int{}, del3)
@@ -437,18 +422,6 @@ func TestFindDuplicates(t *testing.T) {
 	ass.Equal([]int{3, 3, 5}, FindDuplicates(list))
 }
 
-func TestFindDuplicatesBy(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-
-	ass.Equal([]string{"3", "3", "5"}, FindDuplicatesBy(list, func(index int, item int) string {
-		return strconv.Itoa(item)
-	}))
-
-}
-
 func TestFindUniqueDuplicates(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
@@ -457,17 +430,6 @@ func TestFindUniqueDuplicates(t *testing.T) {
 
 	ass.Equal([]int{3, 5}, FindUniqueDuplicates(list))
 
-}
-
-func TestFindUniqueDuplicatesBy(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-
-	ass.Equal([]string{"3", "5"}, FindUniqueDuplicatesBy(list, func(index int, item int) string {
-		return strconv.Itoa(item)
-	}))
 }
 
 func TestShuffle(t *testing.T) {
@@ -524,25 +486,6 @@ func TestMin(t *testing.T) {
 	ass.Equal(2, Min(list2))
 }
 
-func TestMinFilter(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	list := []string{"ss12", "xs2", "xx2"}
-	ass.Equal("xs2", MinFilter(list, func(index int, item string, max string) bool {
-		if item == "xs2" {
-			return item > max
-		}
-
-		return item < max
-	}))
-
-	list2 := []int{5, 2, 111, 3}
-	ass.Equal(2, MinFilter(list2, func(index int, item int, max int) bool {
-		return item < max
-	}))
-}
-
 func TestMax(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
@@ -552,27 +495,6 @@ func TestMax(t *testing.T) {
 
 	list2 := []int{5, 2, 111, 3}
 	ass.Equal(111, Max(list2))
-}
-
-func TestMaxFilter(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	list := []string{"ss12", "xs2", "xx2"}
-
-	ass.Equal("xx2", MaxFilter(list, func(index int, item string, max string) bool {
-		if item == "xs2" {
-			return item < max
-		}
-
-		return item > max
-	}))
-
-	list2 := []int{5, 2, 111, 3}
-	ass.Equal(111, MaxFilter(list2, func(index int, item int, max int) bool {
-		return item > max
-	}))
-
 }
 
 func TestDrop(t *testing.T) {

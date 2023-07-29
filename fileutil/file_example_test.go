@@ -7,6 +7,43 @@ import (
 	"strings"
 )
 
+func ExampleFilterMap() {
+
+	path := "./testdata"
+
+	resInt, _ := FilterMap(path, func(entry os.DirEntry) (int, bool) {
+		if !entry.IsDir() {
+			return 1, true
+		}
+
+		return 0, false
+	})
+
+	fmt.Println(resInt)
+
+	// Output:
+	// [1 1]
+
+}
+
+func ExampleFilterMapRecursively() {
+
+	path := "./"
+
+	resInt, _ := FilterMapRecursively(path, func(path string, entry os.DirEntry) (int, bool) {
+		if !entry.IsDir() {
+			return 1, true
+		}
+
+		return 0, false
+	})
+
+	fmt.Println(resInt)
+
+	// Output:
+	// [1 1 1 1 1]
+}
+
 func ExampleIsDir() {
 	path := "./testdata"
 
@@ -60,6 +97,24 @@ func ExampleCreateFiles() {
 	// true <nil>
 	// true <nil>
 
+}
+
+func ExampleCreateFileWithData() {
+
+	path := "./testdata/test-file-data.txt"
+
+	data := "test"
+
+	_ = CreateFileWithData(path, data)
+
+	data2, _ := ReadAll(path)
+
+	fmt.Println(data2)
+
+	// Output:
+	// test
+
+	_ = DeleteFiles(path)
 }
 
 func ExampleOverwriteFiles() {
@@ -166,7 +221,7 @@ func ExampleFilenames() {
 	fmt.Println(Filenames("./testdata"))
 
 	// Output:
-	// [test-file-exist.txt] <nil>
+	// [test-file-exist.txt test-file-zip.zip] <nil>
 }
 
 func ExampleFilenamesFilter() {
@@ -175,7 +230,7 @@ func ExampleFilenamesFilter() {
 	}))
 
 	// Output:
-	// [test-file-exist.txt] <nil>
+	// [test-file-exist.txt test-file-zip.zip] <nil>
 }
 
 func ExampleFilenamesBy() {
@@ -191,7 +246,7 @@ func ExampleFilenamesRecursively() {
 	fmt.Println(FilenamesRecursively("./testdata"))
 
 	// Output:
-	// [test-file-exist.txt] <nil>
+	// [test-file-exist.txt test-file-zip.zip] <nil>
 }
 
 func ExampleFilenamesRecursivelyFilter() {
@@ -200,7 +255,7 @@ func ExampleFilenamesRecursivelyFilter() {
 	}))
 
 	// Output:
-	// [test-file-exist.txt] <nil>
+	// [test-file-exist.txt test-file-zip.zip] <nil>
 }
 
 func ExampleFilenamesRecursivelyBy() {
@@ -323,4 +378,65 @@ func ExampleDeleteRecursivelyBy() {
 	// true <nil>
 	// false <nil>
 	// false <nil>
+}
+
+func ExampleZip() {
+	target := "./testdata/test-file-zip.zip"
+
+	_ = Zip("./testdata", target)
+
+	fmt.Println(FileExists(target))
+
+	// Output:
+	// true <nil>
+}
+
+func ExampleZipFilter() {
+
+	target := "./testdata/test-file-zip.zip"
+
+	_ = ZipFilter("./testdata", target, func(path string, entry os.DirEntry) bool {
+		return entry.Name() != "test-file-zip.zip"
+	})
+
+	fmt.Println(FileExists(target))
+
+	// Output:
+	// true <nil>
+}
+
+func ExampleReadAll() {
+
+	path := "./testdata/test-file-data.txt"
+
+	data := "test"
+
+	_ = CreateFileWithData(path, data)
+
+	data2, _ := ReadAll(path)
+
+	fmt.Println(data2)
+
+	// Output:
+	// test
+
+	_ = DeleteFiles(path)
+}
+
+func ExampleReadLine() {
+
+	path := "./testdata/test-file-data.txt"
+
+	data := "test\ntest"
+
+	_ = CreateFileWithData(path, data)
+
+	data2, _ := ReadLine(path, 1)
+
+	fmt.Println(data2)
+
+	// Output:
+	// [test]
+
+	_ = DeleteFiles(path)
 }
