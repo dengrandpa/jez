@@ -26,11 +26,11 @@ func ExampleFilterMap() {
 
 }
 
-func ExampleFilterMapRecursively() {
+func ExampleFilterMapWalk() {
 
 	path := "./"
 
-	resInt, _ := FilterMapRecursively(path, func(path string, entry os.DirEntry) (int, bool) {
+	resInt, _ := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
 		if !entry.IsDir() {
 			return 1, true
 		}
@@ -197,19 +197,19 @@ func ExampleOverwriteFilesWithDirs() {
 	// true <nil>
 }
 
-func ExampleFindFileRecursively() {
+func ExampleFindFileWalk() {
 	path := "./testdata/"
 
-	fmt.Println(FindFileRecursively(path, "test-file-exist.txt"))
+	fmt.Println(FindFileWalk(path, "test-file-exist.txt"))
 
 	// Output:
 	// true <nil>
 }
 
-func ExampleFindFileRecursivelyFilter() {
+func ExampleFindFileWalkFilter() {
 	path := "./testdata/"
 
-	fmt.Println(FindFileRecursivelyFilter(path, func(path string, entry os.DirEntry) bool {
+	fmt.Println(FindFileWalkFilter(path, func(path string, entry os.DirEntry) bool {
 		return entry.Name() == "test-file-exist.txt"
 	}))
 
@@ -242,29 +242,29 @@ func ExampleFilenamesBy() {
 	// [by-test-file-exist.txt] <nil>
 }
 
-func ExampleFilenamesRecursively() {
-	fmt.Println(FilenamesRecursively("./testdata"))
+func ExampleFilenamesWalk() {
+	fmt.Println(FilenamesWalk("./testdata"))
 
 	// Output:
 	// [test-file-exist.txt test-file-zip.zip] <nil>
 }
 
-func ExampleFilenamesRecursivelyFilter() {
-	fmt.Println(FilenamesRecursivelyFilter("./testdata/", func(path string, entry os.DirEntry) bool {
+func ExampleFilenamesWalkFilter() {
+	fmt.Println(FilenamesWalkFilter("./testdata/", func(path string, entry os.DirEntry) bool {
 		return strings.Contains(entry.Name(), "test-file-exist")
 	}))
 
 	// Output:
-	// [test-file-exist.txt test-file-zip.zip] <nil>
+	// [test-file-exist.txt] <nil>
 }
 
-func ExampleFilenamesRecursivelyBy() {
-	fmt.Println(FilenamesRecursivelyBy("./testdata/", func(path string, entry os.DirEntry) string {
+func ExampleFilenamesWalkBy() {
+	fmt.Println(FilenamesWalkBy("./testdata/", func(path string, entry os.DirEntry) string {
 		return "by-" + entry.Name()
 	}))
 
 	// Output:
-	// [by-test-file-exist.txt] <nil>
+	// [by-test-file-exist.txt by-test-file-zip.zip] <nil>
 }
 
 func ExampleDeleteFiles() {
@@ -317,7 +317,7 @@ func ExampleDeleteDirs() {
 	// false <nil>
 }
 
-func ExampleDeleteEmptyDirRecursively() {
+func ExampleDeleteEmptyDirWalk() {
 	paths := []string{
 		"./testdata/test-dir-delete/test-dirs-delete1",
 		"./testdata/test-dir-delete/test-dirs-delete2",
@@ -329,7 +329,7 @@ func ExampleDeleteEmptyDirRecursively() {
 		fmt.Println(DirExists(path))
 	}
 
-	_ = DeleteEmptyDirRecursively("./testdata/test-dir-delete")
+	_ = DeleteEmptyDirWalk("./testdata/test-dir-delete")
 
 	for _, path := range paths {
 		fmt.Println(DirExists(path))
@@ -342,7 +342,7 @@ func ExampleDeleteEmptyDirRecursively() {
 	// false <nil>
 }
 
-func ExampleDeleteRecursivelyBy() {
+func ExampleDeleteWalkBy() {
 	filePaths := []string{
 		"./testdata/test-dir-delete/test-dir-delete/test-dirs-delete.txt",
 		"./testdata/test-dir-delete/test-dir-delete1/test-dirs-delete.txt",
@@ -358,7 +358,7 @@ func ExampleDeleteRecursivelyBy() {
 	_ = CreateDirs(dirPath)
 	fmt.Println(DirExists(dirPath))
 
-	isDelete, _ := DeleteRecursivelyBy("./testdata/test-dir-delete", func(path string, entry os.DirEntry) (bool, error) {
+	isDelete, _ := DeleteWalkBy("./testdata/test-dir-delete", func(path string, entry os.DirEntry) (bool, error) {
 		return strings.Contains(path, "test-dir-delete1"), nil
 	}, true)
 

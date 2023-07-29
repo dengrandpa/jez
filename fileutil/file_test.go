@@ -28,13 +28,13 @@ func TestFilterMap(t *testing.T) {
 
 }
 
-func TestFilterMapRecursively(t *testing.T) {
+func TestFilterMapWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	path := "./"
 
-	resInt, _ := FilterMapRecursively(path, func(path string, entry os.DirEntry) (int, bool) {
+	resInt, _ := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
 		if !entry.IsDir() {
 			return 1, true
 		}
@@ -235,26 +235,26 @@ func TestCopyFile(t *testing.T) {
 
 }
 
-func TestFindFileRecursively(t *testing.T) {
+func TestFindFileWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	path := "./testdata/"
 
-	exist, err := FindFileRecursively(path, "test-file-exist.txt")
+	exist, err := FindFileWalk(path, "test-file-exist.txt")
 
 	ass.Nil(err)
 	ass.True(exist)
 
 }
 
-func TestFindFileRecursivelyFilter(t *testing.T) {
+func TestFindFileWalkFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
 	path := "./testdata/"
 
-	exist, err := FindFileRecursivelyFilter(path, func(path string, entry os.DirEntry) bool {
+	exist, err := FindFileWalkFilter(path, func(path string, entry os.DirEntry) bool {
 		return entry.Name() == "test-file-exist.txt"
 	})
 
@@ -297,22 +297,22 @@ func TestFilenamesBy(t *testing.T) {
 
 }
 
-func TestFilenamesRecursively(t *testing.T) {
+func TestFilenamesWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesRecursively("./testdata/")
+	filenames, err := FilenamesWalk("./testdata/")
 
 	ass.Nil(err)
 
 	ass.Contains(filenames, "test-file-exist.txt")
 }
 
-func TestFilenamesRecursivelyFilter(t *testing.T) {
+func TestFilenamesWalkFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesRecursivelyFilter("./testdata/", func(path string, entry os.DirEntry) bool {
+	filenames, err := FilenamesWalkFilter("./testdata/", func(path string, entry os.DirEntry) bool {
 		return entry.Name() == "test-file-exist.txt"
 	})
 	ass.Nil(err)
@@ -320,11 +320,11 @@ func TestFilenamesRecursivelyFilter(t *testing.T) {
 	ass.Equal(filenames[0], "test-file-exist.txt")
 }
 
-func TestFilenamesRecursivelyBy(t *testing.T) {
+func TestFilenamesWalkBy(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesRecursivelyBy("./testdata/", func(path string, entry os.DirEntry) string {
+	filenames, err := FilenamesWalkBy("./testdata/", func(path string, entry os.DirEntry) string {
 		return "by-" + entry.Name()
 	})
 	ass.Nil(err)
@@ -377,7 +377,7 @@ func TestDeleteDirs(t *testing.T) {
 	}
 }
 
-func TestDeleteEmptyDirRecursively(t *testing.T) {
+func TestDeleteEmptyDirWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
@@ -392,14 +392,14 @@ func TestDeleteEmptyDirRecursively(t *testing.T) {
 		ass.DirExists(path)
 	}
 
-	ass.Nil(DeleteEmptyDirRecursively("./testdata/test-dir-delete"))
+	ass.Nil(DeleteEmptyDirWalk("./testdata/test-dir-delete"))
 
 	for _, path := range paths {
 		ass.NoDirExists(path)
 	}
 }
 
-func TestDeleteRecursivelyBy(t *testing.T) {
+func TestDeleteWalkBy(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
@@ -418,7 +418,7 @@ func TestDeleteRecursivelyBy(t *testing.T) {
 	ass.Nil(CreateDirs(dirPath))
 	ass.DirExists(dirPath)
 
-	isDelete, err := DeleteRecursivelyBy("./testdata/test-dir-delete", func(path string, entry os.DirEntry) (bool, error) {
+	isDelete, err := DeleteWalkBy("./testdata/test-dir-delete", func(path string, entry os.DirEntry) (bool, error) {
 		return strings.Contains(path, "test-dir-delete1"), nil
 	}, true)
 

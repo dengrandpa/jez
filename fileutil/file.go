@@ -41,8 +41,8 @@ func FilterMap[T any](dirPath string, iteratee func(entry os.DirEntry) (T, bool)
 	return result, nil
 }
 
-// FilterMapRecursively 递归遍历所有目录，对每个文件调用 "iteratee"，如果返回 "true"，则将结果放入结果集中
-func FilterMapRecursively[T any](dirPath string, iteratee func(path string, d os.DirEntry) (T, bool)) ([]T, error) {
+// FilterMapWalk 返回遍历所有目录、子目录，对每个文件调用 "iteratee"，如果返回 "true"，则将结果放入结果集中
+func FilterMapWalk[T any](dirPath string, iteratee func(path string, d os.DirEntry) (T, bool)) ([]T, error) {
 
 	var result []T
 
@@ -194,8 +194,8 @@ func CopyFile(src, dst string) error {
 	return err
 }
 
-// FindFileRecursively 递归查找文件
-func FindFileRecursively(dirPath, filename string) (bool, error) {
+// FindFileWalk 遍历目录、子目录，查找文件
+func FindFileWalk(dirPath, filename string) (bool, error) {
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
 
@@ -217,8 +217,8 @@ func FindFileRecursively(dirPath, filename string) (bool, error) {
 	return false, err
 }
 
-// FindFileRecursivelyFilter 递归查找文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则表示找到了
-func FindFileRecursivelyFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) (bool, error) {
+// FindFileWalkFilter 遍历目录、子目录，查找文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则表示找到了
+func FindFileWalkFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) (bool, error) {
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
 
@@ -289,8 +289,8 @@ func FilenamesBy(dirPath string, iteratee func(path string, entry os.DirEntry) s
 	return names, nil
 }
 
-// FilenamesRecursively 返回目录下的文件名切片，包含子目录下的
-func FilenamesRecursively(dirPath string) ([]string, error) {
+// FilenamesWalk 返回目录下的文件名切片，包含子目录
+func FilenamesWalk(dirPath string) ([]string, error) {
 	var names []string
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
@@ -309,8 +309,8 @@ func FilenamesRecursively(dirPath string) ([]string, error) {
 	return names, err
 }
 
-// FilenamesRecursivelyFilter 递归遍历目录下的文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则将文件名添加到切片中
-func FilenamesRecursivelyFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) ([]string, error) {
+// FilenamesWalkFilter 返回目录下的文件，包含子目录，对每个文件调用 "iteratee" 函数，如果返回 "true"，则将文件名添加到切片中
+func FilenamesWalkFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) ([]string, error) {
 	var names []string
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
@@ -329,8 +329,8 @@ func FilenamesRecursivelyFilter(dirPath string, iteratee func(path string, entry
 	return names, err
 }
 
-// FilenamesRecursivelyBy 递归遍历目录下的文件，对每个文件调用 "iteratee" 函数，将返回的字符串添加到切片中
-func FilenamesRecursivelyBy(dirPath string, iteratee func(path string, entry os.DirEntry) string) ([]string, error) {
+// FilenamesWalkBy 返回目录下的文件，包含子目录，对每个文件调用 "iteratee" 函数，将返回的字符串添加到切片中
+func FilenamesWalkBy(dirPath string, iteratee func(path string, entry os.DirEntry) string) ([]string, error) {
 	var names []string
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
@@ -369,20 +369,20 @@ func DeleteDirs(dirPaths ...string) error {
 	return nil
 }
 
-// DeleteEmptyDirRecursively 递归删除空目录
+// DeleteEmptyDirWalk 返回删除空目录，包含子目录
 //
 // 注意：例如 "/a/b"，当删除 "b" 时，如果 "a" 也是一个空目录，也会被删除
-func DeleteEmptyDirRecursively(dirPath string) error {
-	_, err := DeleteRecursivelyBy(dirPath, nil, true)
+func DeleteEmptyDirWalk(dirPath string) error {
+	_, err := DeleteWalkBy(dirPath, nil, true)
 	return err
 }
 
-// DeleteRecursivelyBy 是一个递归删除实现，从给定的目录路径开始递归地删除文件和目录，对每个文件（不包括目录）调用"iteratee"函数。
+// DeleteWalkBy 是一个递归删除实现，从给定的目录路径开始递归地删除文件和目录，对每个文件（不包括目录）调用"iteratee"函数。
 //
 // "iteratee" 函数接受文件（不包括目录）路径和 os.DirEntry 实例作为参数，并返回当前目录是否已被删除。
 // 如果要删除空目录，请注意 bool 返回值，错误的 bool 返回值可能导致文件意外删除或空目录删除失败。
 // "withEmptyDir" 参数用于指定是否删除空目录。
-func DeleteRecursivelyBy(
+func DeleteWalkBy(
 	dirPath string, iteratee func(path string, entry os.DirEntry) (bool, error), withEmptyDir ...bool) (bool, error) {
 
 	var withEmpty bool
@@ -417,7 +417,7 @@ func DeleteRecursivelyBy(
 		} else {
 
 			// 递归子目录
-			if isDelete, err = DeleteRecursivelyBy(path, iteratee, withEmptyDir...); err != nil {
+			if isDelete, err = DeleteWalkBy(path, iteratee, withEmptyDir...); err != nil {
 				return false, err
 			}
 		}
