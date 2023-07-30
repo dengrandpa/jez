@@ -22,7 +22,7 @@ func ParseTime(tm string, format ...TimeFormat) time.Time {
 
 // ParseTimestamp 将时间戳转换为时间
 func ParseTimestamp(timestamp int64) time.Time {
-	return time.Unix(timestamp, 0)
+	return time.Unix(timestamp, 0).Local()
 }
 
 // StartOfMinute 返回时间"t"所在分钟的开始时间 "yyyy-mm-dd hh:mm:00"
