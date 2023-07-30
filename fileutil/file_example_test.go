@@ -28,7 +28,7 @@ func ExampleFilterMap() {
 
 func ExampleFilterMapWalk() {
 
-	path := "./"
+	path := "./testdata"
 
 	resInt, _ := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
 		if !entry.IsDir() {
@@ -41,7 +41,7 @@ func ExampleFilterMapWalk() {
 	fmt.Println(resInt)
 
 	// Output:
-	// [1 1 1 1 1]
+	// [1 1]
 }
 
 func ExampleIsDir() {
@@ -230,7 +230,7 @@ func ExampleFilenamesFilter() {
 	}))
 
 	// Output:
-	// [test-file-exist.txt test-file-zip.zip] <nil>
+	// [test-file-exist.txt] <nil>
 }
 
 func ExampleFilenamesBy() {
@@ -239,7 +239,7 @@ func ExampleFilenamesBy() {
 	}))
 
 	// Output:
-	// [by-test-file-exist.txt] <nil>
+	// [by-test-file-exist.txt by-test-file-zip.zip] <nil>
 }
 
 func ExampleFilenamesWalk() {

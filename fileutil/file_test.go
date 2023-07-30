@@ -32,7 +32,7 @@ func TestFilterMapWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./"
+	path := "./testdata"
 
 	resInt, _ := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
 		if !entry.IsDir() {
@@ -42,7 +42,7 @@ func TestFilterMapWalk(t *testing.T) {
 		return 0, false
 	})
 
-	ass.Equal([]int{1, 1, 1, 1, 1}, resInt)
+	ass.Equal([]int{1, 1}, resInt)
 }
 
 func TestIsDir(t *testing.T) {
