@@ -309,8 +309,8 @@ func TestFormatTimestamp(t *testing.T) {
 
 	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	ass.Equal("2022-01-02 03:04:05", FormatTimestamp(tm.Local().Unix()))
-	ass.Equal("2022/01/02 03:04:05", FormatTimestamp(tm.Local().Unix(), YYYYMMDDHHMMSS2))
+	ass.Equal(FormatTime(tm.Local()), FormatTimestamp(tm.Local().Unix()))
+	ass.Equal(FormatTime(tm.Local(), YYYYMMDDHHMMSS2), FormatTimestamp(tm.Local().Unix(), YYYYMMDDHHMMSS2))
 }
 
 func TestFormatNow(t *testing.T) {

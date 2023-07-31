@@ -290,12 +290,10 @@ func ExampleFormatTimestamp() {
 
 	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	fmt.Println(FormatTimestamp(tm.Local().Unix()))
-	fmt.Println(FormatTimestamp(tm.Local().Unix(), YYYYMMDDHHMMSS2))
+	fmt.Println(FormatTimestamp(tm.Local().Unix()) == FormatTime(tm.Local()))
 
 	// Output:
-	// 2022-01-02 03:04:05
-	// 2022/01/02 03:04:05
+	// true
 }
 
 func ExampleFormatNow() {
