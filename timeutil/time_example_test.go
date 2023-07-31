@@ -7,29 +7,29 @@ import (
 
 func ExampleParseTime() {
 
-	fmt.Println(ToCST(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS)))
-	fmt.Println(ToCST(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS)))
-	fmt.Println(ToCST(ParseTime("2022/01/02 03:04:05", YYYYMMDDHHMMSS2)))
-	fmt.Println(ToCST(ParseTime("2022-01", YYYYMM)))
-	fmt.Println(ToCST(ParseTime("2022-01-02", YYYYMMDD)))
-	fmt.Println(ToCST(ParseTime("03:04:05", HHMMSS)))
-	fmt.Println(ToCST(ParseTime("03:04", HHMM)))
+	fmt.Println(FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, CST())))
+	fmt.Println(FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, CST()), YYYYMMDDHHMMSS2))
+	fmt.Println(FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, CST()), YYYYMM))
+	fmt.Println(FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, CST()), YYYYMMDD))
+	fmt.Println(FormatTime(time.Date(0, 1, 1, 3, 4, 5, 0, CST()), HHMMSS))
+	fmt.Println(FormatTime(time.Date(0, 1, 1, 3, 4, 0, 0, CST()), HHMM))
 
 	// Output:
-	// 2022-01-02 03:04:05 +0800 CST
-	// 2022-01-02 03:04:05 +0800 CST
-	// 2022-01-02 03:04:05 +0800 CST
-	// 2022-01-01 00:00:00 +0800 CST
-	// 2022-01-02 00:00:00 +0800 CST
-	// 0000-01-01 03:04:05 +0805 LMT
-	// 0000-01-01 03:04:00 +0805 LMT
+	// 2022-01-02 03:04:05
+	// 2022/01/02 03:04:05
+	// 2022-01
+	// 2022-01-02
+	// 03:04:05
+	// 03:04
 }
 
 func ExampleParseTimestamp() {
 
 	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	fmt.Println(ParseTimestamp(tm.Unix()))
+	localTm := tm.Local()
+
+	fmt.Println(ToCST(ParseTimestamp(localTm.Unix())))
 
 	// Output:
 	// 2022-01-02 03:04:05 +0800 CST
@@ -288,10 +288,10 @@ func ExampleFormatTime() {
 
 func ExampleFormatTimestamp() {
 
-	tm := int64(1641063845)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	fmt.Println(FormatTimestamp(tm))
-	fmt.Println(FormatTimestamp(tm, YYYYMMDDHHMMSS2))
+	fmt.Println(FormatTimestamp(tm.Local().Unix()))
+	fmt.Println(FormatTimestamp(tm.Local().Unix(), YYYYMMDDHHMMSS2))
 
 	// Output:
 	// 2022-01-02 03:04:05
@@ -372,17 +372,17 @@ func ExampleRangeYears() {
 
 func ExampleNewTime() {
 
-	timestamp := NewTime().Unix()
-	tm1 := NewTime(2022, 1, 2)
-	tm2 := NewTime(2022, 1, 2, 3, 4, 5)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	fmt.Println(timestamp == time.Now().Unix())
-	fmt.Println(tm1)
-	fmt.Println(tm2)
+	localTm := tm.In(time.Local)
+
+	tm1 := NewTime(localTm.Year(), int(localTm.Month()), localTm.Day(), localTm.Hour(), localTm.Minute(), localTm.Second())
+
+	fmt.Println(NewTime().Unix() == time.Now().Unix())
+	fmt.Println(ToCST(tm1))
 
 	// Output:
 	// true
-	// 2022-01-02 00:00:00 +0800 CST
 	// 2022-01-02 03:04:05 +0800 CST
 
 }

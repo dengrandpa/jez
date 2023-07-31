@@ -11,39 +11,37 @@ func TestParseTime(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	ass.Equal(
-		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
-		ToCST(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS)))
+	ass.Equal("2022-01-02 03:04:05",
+		FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)))
 
 	ass.Equal(
-		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
-		ToCST(ParseTime("2022/01/02 03:04:05", YYYYMMDDHHMMSS2)))
+		"2022/01/02 03:04:05",
+		FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local), YYYYMMDDHHMMSS2))
 
 	ass.Equal(
-		time.Date(2022, 1, 1, 0, 0, 0, 0, CST()),
-		ToCST(ParseTime("2022-01", YYYYMM)))
+		"2022-01",
+		FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), YYYYMM))
 
 	ass.Equal(
-		time.Date(2022, 1, 2, 0, 0, 0, 0, CST()),
-		ToCST(ParseTime("2022-01-02", YYYYMMDD)))
+		"2022-01-02",
+		FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), YYYYMMDD))
 
 	ass.Equal(
-		time.Date(0, 1, 1, 3, 4, 5, 0, CST()),
-		ToCST(ParseTime("03:04:05", HHMMSS)))
+		"03:04:05",
+		FormatTime(time.Date(0, 1, 1, 3, 4, 5, 0, time.Local), HHMMSS))
 
 	ass.Equal(
-		time.Date(0, 1, 1, 3, 4, 0, 0, CST()),
-		ToCST(ParseTime("03:04", HHMM)))
+		"03:04",
+		FormatTime(time.Date(0, 1, 1, 3, 4, 0, 0, time.Local), HHMM))
 }
 
 func TestParseTimestamp(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
 
-	ass.Equal(tm, ToCST(ParseTimestamp(tm.Unix())))
-
+	ass.Equal(ToCST(tm), ToCST(ParseTimestamp(tm.Unix())))
 }
 
 func TestStartOfMinute(t *testing.T) {
@@ -299,7 +297,7 @@ func TestFormatTime(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
 
 	ass.Equal("2022-01-02 03:04:05", FormatTime(tm))
 	ass.Equal("2022/01/02 03:04:05", FormatTime(tm, YYYYMMDDHHMMSS2))
@@ -309,10 +307,10 @@ func TestFormatTimestamp(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	timestamp := time.Date(2022, 1, 2, 3, 4, 5, 0, CST()).Unix()
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	ass.Equal("2022-01-02 03:04:05", FormatTimestamp(timestamp))
-	ass.Equal("2022/01/02 03:04:05", FormatTimestamp(timestamp, YYYYMMDDHHMMSS2))
+	ass.Equal("2022-01-02 03:04:05", FormatTimestamp(tm.Local().Unix()))
+	ass.Equal("2022/01/02 03:04:05", FormatTimestamp(tm.Local().Unix(), YYYYMMDDHHMMSS2))
 }
 
 func TestFormatNow(t *testing.T) {
@@ -408,8 +406,9 @@ func TestNewTime(t *testing.T) {
 	ass := assert.New(t)
 
 	ass.Equal(time.Now().Unix(), NewTime().Unix())
-	ass.Equal(time.Date(2022, 1, 2, 0, 0, 0, 0, CST()), ToCST(NewTime(2022, 1, 2)))
-	ass.Equal(time.Date(2022, 0, 0, 0, 0, 0, 0, CST()), ToCST(NewTime(2022)))
+
+	ass.Equal(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), NewTime(2022, 1, 2))
+	ass.Equal(time.Date(2022, 0, 0, 0, 0, 0, 0, time.Local), NewTime(2022))
 }
 
 func TestSubTime(t *testing.T) {
