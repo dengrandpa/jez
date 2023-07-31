@@ -1,3 +1,4 @@
+[![Coverage](https://img.shields.io/codecov/c/gh/dengrandpa/jez)](https://app.codecov.io/gh/dengrandpa/jez)
 # jez
 
 <div STYLE="page-break-after: always;"></div>
