@@ -7,20 +7,14 @@ import (
 
 func ExampleParseTime() {
 
-	fmt.Println(FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, CST())))
-	fmt.Println(FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, CST()), YYYYMMDDHHMMSS2))
-	fmt.Println(FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, CST()), YYYYMM))
-	fmt.Println(FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, CST()), YYYYMMDD))
-	fmt.Println(FormatTime(time.Date(0, 1, 1, 3, 4, 5, 0, CST()), HHMMSS))
-	fmt.Println(FormatTime(time.Date(0, 1, 1, 3, 4, 0, 0, CST()), HHMM))
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+
+	tmStr := FormatTime(tm.Local())
+
+	fmt.Println(ToCST(ParseTime(tmStr)))
 
 	// Output:
-	// 2022-01-02 03:04:05
-	// 2022/01/02 03:04:05
-	// 2022-01
-	// 2022-01-02
-	// 03:04:05
-	// 03:04
+	// 2022-01-02 03:04:05 +0800 CST
 }
 
 func ExampleParseTimestamp() {

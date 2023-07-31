@@ -7,32 +7,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_getTimeFormat(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+	tf := getTimeFormat([]TimeFormat{YYYYMMDD})
+	tf1 := getTimeFormat(nil)
+
+	ass.Equal(YYYYMMDD, tf)
+	ass.Equal(YYYYMMDDHHMMSS, tf1)
+}
+
 func TestParseTime(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	ass.Equal("2022-01-02 03:04:05",
-		FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)))
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	ass.Equal(
-		"2022/01/02 03:04:05",
-		FormatTime(time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local), YYYYMMDDHHMMSS2))
+	tmStr := FormatTime(tm.Local())
 
-	ass.Equal(
-		"2022-01",
-		FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), YYYYMM))
-
-	ass.Equal(
-		"2022-01-02",
-		FormatTime(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), YYYYMMDD))
-
-	ass.Equal(
-		"03:04:05",
-		FormatTime(time.Date(0, 1, 1, 3, 4, 5, 0, time.Local), HHMMSS))
-
-	ass.Equal(
-		"03:04",
-		FormatTime(time.Date(0, 1, 1, 3, 4, 0, 0, time.Local), HHMM))
+	ass.Equal(tm, ToCST(ParseTime(tmStr)))
 }
 
 func TestParseTimestamp(t *testing.T) {
