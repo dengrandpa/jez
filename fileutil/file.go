@@ -71,7 +71,7 @@ func IsDir(dirPath string) (bool, error) {
 
 // IsEmptyDir 判断目录是否为空
 func IsEmptyDir(dirPath string) (bool, error) {
-	entries, err := os.ReadDir(dirPath)
+	entries, err := osReadDir(dirPath)
 	if err != nil {
 		return false, err
 	}

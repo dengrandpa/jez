@@ -7,6 +7,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_osReadDir(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	dir := "./testdata/osReadDir/"
+
+	path := dir + "test-file.txt"
+	_ = CreateFilesWithDirs(path)
+
+	list, err := osReadDir(dir)
+
+	ass.Nil(err)
+
+	var ok bool
+
+	for _, entry := range list {
+		if entry.Name() == "test-file.txt" {
+			ok = true
+		}
+	}
+
+	_ = DeleteDirs(dir)
+
+	ass.True(ok)
+}
+
 func TestFilterMap(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
@@ -19,13 +45,15 @@ func TestFilterMap(t *testing.T) {
 	filePath := dir + "test-file.txt"
 	_ = CreateFiles(filePath)
 
-	resInt, _ := FilterMap(dir, func(entry os.DirEntry) (int, bool) {
+	resInt, err := FilterMap(dir, func(entry os.DirEntry) (int, bool) {
 		if !entry.IsDir() {
 			return 1, true
 		}
 
 		return 0, false
 	})
+
+	ass.Nil(err)
 
 	ass.Equal([]int{1}, resInt)
 
@@ -43,13 +71,15 @@ func TestFilterMapWalk(t *testing.T) {
 
 	_ = CreateFilesWithDirs(path)
 
-	resInt, _ := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
+	resInt, err := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
 		if entry.Name() == "test.txt" {
 			return 1, true
 		}
 
 		return 0, false
 	})
+
+	ass.Nil(err)
 
 	ass.Equal([]int{1}, resInt)
 
@@ -64,7 +94,9 @@ func TestIsDir(t *testing.T) {
 
 	_ = CreateDirs(dir)
 
-	exist, _ := IsDir(dir)
+	exist, err := IsDir(dir)
+
+	ass.Nil(err)
 
 	ass.Equal(ass.DirExists(dir), exist)
 
@@ -79,7 +111,9 @@ func TestIsEmptyDir(t *testing.T) {
 
 	_ = CreateDirs(dir)
 
-	exist, _ := IsEmptyDir(dir)
+	exist, err := IsEmptyDir(dir)
+
+	ass.Nil(err)
 	ass.True(exist)
 
 	_ = DeleteDirs(dir)
@@ -95,7 +129,9 @@ func TestFileExists(t *testing.T) {
 
 	_ = CreateFilesWithDirs(path)
 
-	exist, _ := FileExists(path)
+	exist, err := FileExists(path)
+
+	ass.Nil(err)
 	ass.Equal(ass.FileExists(path), exist)
 
 	_ = DeleteDirs(dir)
@@ -109,8 +145,9 @@ func TestDirExists(t *testing.T) {
 
 	_ = CreateDirs(dir)
 
-	exist, _ := DirExists(dir)
+	exist, err := DirExists(dir)
 
+	ass.Nil(err)
 	ass.Equal(ass.DirExists(dir), exist)
 
 	_ = DeleteDirs(dir)
@@ -150,7 +187,7 @@ func TestCreateFileWithData(t *testing.T) {
 
 	_ = CreateDirs(dir)
 
-	_ = CreateFileWithData(path, data)
+	ass.Nil(CreateFileWithData(path, data))
 
 	data2, _ := ReadAll(path)
 
@@ -252,8 +289,9 @@ func TestOsCreate(t *testing.T) {
 
 	_ = CreateDirs(dir)
 
-	file, _ := OsCreate(path)
+	file, err := OsCreate(path)
 
+	ass.Nil(err)
 	ass.FileExists(path)
 
 	file.Close()
