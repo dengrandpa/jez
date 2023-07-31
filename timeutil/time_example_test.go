@@ -7,13 +7,13 @@ import (
 
 func ExampleParseTime() {
 
-	fmt.Println(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS))
-	fmt.Println(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS))
-	fmt.Println(ParseTime("2022/01/02 03:04:05", YYYYMMDDHHMMSS2))
-	fmt.Println(ParseTime("2022-01", YYYYMM))
-	fmt.Println(ParseTime("2022-01-02", YYYYMMDD))
-	fmt.Println(ParseTime("03:04:05", HHMMSS))
-	fmt.Println(ParseTime("03:04", HHMM))
+	fmt.Println(ToCST(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS)))
+	fmt.Println(ToCST(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS)))
+	fmt.Println(ToCST(ParseTime("2022/01/02 03:04:05", YYYYMMDDHHMMSS2)))
+	fmt.Println(ToCST(ParseTime("2022-01", YYYYMM)))
+	fmt.Println(ToCST(ParseTime("2022-01-02", YYYYMMDD)))
+	fmt.Println(ToCST(ParseTime("03:04:05", HHMMSS)))
+	fmt.Println(ToCST(ParseTime("03:04", HHMM)))
 
 	// Output:
 	// 2022-01-02 03:04:05 +0800 CST
@@ -27,7 +27,9 @@ func ExampleParseTime() {
 
 func ExampleParseTimestamp() {
 
-	fmt.Println(ParseTimestamp(1641063845))
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+
+	fmt.Println(ParseTimestamp(tm.Unix()))
 
 	// Output:
 	// 2022-01-02 03:04:05 +0800 CST
@@ -36,7 +38,7 @@ func ExampleParseTimestamp() {
 
 func ExampleStartOfMinute() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(StartOfMinute(tm))
 
@@ -46,7 +48,7 @@ func ExampleStartOfMinute() {
 
 func ExampleEndOfMinute() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := EndOfMinute(tm)
 
 	fmt.Println(res)
@@ -57,7 +59,7 @@ func ExampleEndOfMinute() {
 
 func ExampleStartOfHour() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := StartOfHour(tm)
 
 	fmt.Println(res)
@@ -68,7 +70,7 @@ func ExampleStartOfHour() {
 
 func ExampleEndOfHour() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := EndOfHour(tm)
 
 	fmt.Println(res)
@@ -79,7 +81,7 @@ func ExampleEndOfHour() {
 
 func ExampleStartOfDay() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := StartOfDay(tm)
 
 	fmt.Println(res)
@@ -90,7 +92,7 @@ func ExampleStartOfDay() {
 
 func ExampleEndOfDay() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := EndOfDay(tm)
 
 	fmt.Println(res)
@@ -101,7 +103,7 @@ func ExampleEndOfDay() {
 
 func ExampleStartOfWeekMonday() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := StartOfWeekMonday(tm)
 
 	fmt.Println(res)
@@ -114,7 +116,7 @@ func ExampleStartOfWeekMonday() {
 
 func ExampleEndOfWeekSunday() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := EndOfWeekSunday(tm)
 
 	fmt.Println(res)
@@ -127,7 +129,7 @@ func ExampleEndOfWeekSunday() {
 
 func ExampleStartOfWeekSunday() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := StartOfWeekSunday(tm)
 
 	fmt.Println(res)
@@ -140,7 +142,7 @@ func ExampleStartOfWeekSunday() {
 
 func ExampleEndOfWeekMonday() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := EndOfWeekMonday(tm)
 
 	fmt.Println(res)
@@ -153,7 +155,7 @@ func ExampleEndOfWeekMonday() {
 
 func ExampleStartOfMonth() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := StartOfMonth(tm)
 
 	fmt.Println(res)
@@ -164,7 +166,7 @@ func ExampleStartOfMonth() {
 
 func ExampleEndOfMonth() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := EndOfMonth(tm)
 
 	fmt.Println(res)
@@ -175,7 +177,7 @@ func ExampleEndOfMonth() {
 
 func ExampleStartOfYear() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := StartOfYear(tm)
 
 	fmt.Println(res)
@@ -188,7 +190,7 @@ func ExampleStartOfYear() {
 
 func ExampleEndOfYear() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := EndOfYear(tm)
 
 	fmt.Println(res)
@@ -201,7 +203,7 @@ func ExampleEndOfYear() {
 
 func ExampleAddSecond() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(AddSecond(tm, 10))
 
@@ -211,7 +213,7 @@ func ExampleAddSecond() {
 
 func ExampleAddMinute() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(AddMinute(tm, 10))
 
@@ -221,7 +223,7 @@ func ExampleAddMinute() {
 
 func ExampleAddHour() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(AddHour(tm, 10))
 
@@ -231,7 +233,7 @@ func ExampleAddHour() {
 
 func ExampleAddDay() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(AddDay(tm, 10))
 
@@ -241,7 +243,7 @@ func ExampleAddDay() {
 
 func ExampleAddWeek() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := AddWeek(tm, 10).Weekday()
 
@@ -253,7 +255,7 @@ func ExampleAddWeek() {
 
 func ExampleAddMonth() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(AddMonth(tm, 10).Month().String())
 
@@ -263,7 +265,7 @@ func ExampleAddMonth() {
 
 func ExampleAddYear() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(AddYear(tm, 10))
 
@@ -273,7 +275,7 @@ func ExampleAddYear() {
 
 func ExampleFormatTime() {
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	fmt.Println(FormatTime(tm))
 	fmt.Println(FormatTime(tm, YYYYMMDDHHMMSS2))
@@ -325,8 +327,8 @@ func ExampleIsLeapYear() {
 
 func ExampleRangeHours() {
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2022, 1, 2, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2022, 1, 2, 5, 55, 44, 0, CST())
 
 	fmt.Println(RangeHours(tm1, tm2))
 
@@ -337,8 +339,8 @@ func ExampleRangeHours() {
 
 func ExampleRangeDays() {
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2022, 1, 4, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2022, 1, 4, 5, 55, 44, 0, CST())
 
 	fmt.Println(RangeDays(tm1, tm2))
 
@@ -348,8 +350,8 @@ func ExampleRangeDays() {
 
 func ExampleRangeMonths() {
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2022, 3, 4, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2022, 3, 4, 5, 55, 44, 0, CST())
 
 	fmt.Println(RangeMonths(tm1, tm2))
 
@@ -359,8 +361,8 @@ func ExampleRangeMonths() {
 
 func ExampleRangeYears() {
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2024, 2, 4, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2024, 2, 4, 5, 55, 44, 0, CST())
 
 	fmt.Println(RangeYears(tm1, tm2))
 
@@ -387,8 +389,8 @@ func ExampleNewTime() {
 
 func ExampleSubTime() {
 
-	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, time.Local)
-	t2 := time.Date(2023, 1, 2, 1, 59, 6, 0, time.Local)
+	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, CST())
+	t2 := time.Date(2023, 1, 2, 1, 59, 6, 0, CST())
 
 	fmt.Println(SubTime(t2, t1))
 
@@ -398,11 +400,37 @@ func ExampleSubTime() {
 
 func ExampleSubTimestamp() {
 
-	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, time.Local)
-	t2 := time.Date(2022, 1, 33, 1, 59, 6, 0, time.Local)
+	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, CST())
+	t2 := time.Date(2022, 1, 33, 1, 59, 6, 0, CST())
 
 	fmt.Println(SubTimestamp(t1.Unix(), t2.Unix()))
 
 	// Output:
 	// 30 3 59 6
+}
+
+func ExampleCST() {
+	local := CST()
+
+	fmt.Println(local)
+
+	// Output:
+	// Asia/Shanghai
+}
+
+func ExampleToCST() {
+
+	t1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.UTC)
+
+	t2 := time.Date(2022, 1, 2, 11, 4, 5, 0, CST())
+
+	t3 := ToCST(t1)
+
+	fmt.Println(t3)
+
+	fmt.Println(t2.Unix() == t3.Unix())
+
+	// Output:
+	// 2022-01-02 11:04:05 +0800 CST
+	// true
 }

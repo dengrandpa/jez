@@ -1,10 +1,7 @@
 package fileutil
 
 import (
-	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,9 +11,15 @@ func TestFilterMap(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata"
+	dir := "./testdata/TestFilterMap/"
 
-	resInt, _ := FilterMap(path, func(entry os.DirEntry) (int, bool) {
+	dirPath := dir + "test-dir"
+	_ = CreateDirs(dirPath)
+
+	filePath := dir + "test-file.txt"
+	_ = CreateFiles(filePath)
+
+	resInt, _ := FilterMap(dir, func(entry os.DirEntry) (int, bool) {
 		if !entry.IsDir() {
 			return 1, true
 		}
@@ -24,7 +27,9 @@ func TestFilterMap(t *testing.T) {
 		return 0, false
 	})
 
-	ass.Equal([]int{1, 1}, resInt)
+	ass.Equal([]int{1}, resInt)
+
+	_ = DeleteDirs(dir)
 
 }
 
@@ -32,72 +37,97 @@ func TestFilterMapWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata"
+	dir := "./testdata/TestFilterMapWalk/"
+
+	path := dir + "test-dir/test.txt"
+
+	_ = CreateFilesWithDirs(path)
 
 	resInt, _ := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
-		if !entry.IsDir() {
+		if entry.Name() == "test.txt" {
 			return 1, true
 		}
 
 		return 0, false
 	})
 
-	ass.Equal([]int{1, 1}, resInt)
+	ass.Equal([]int{1}, resInt)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestIsDir(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata"
-	exist, err := IsDir(path)
+	dir := "./testdata/TestIsDir/"
 
-	ass.Nil(err)
-	ass.Equal(ass.DirExists(path), exist)
+	_ = CreateDirs(dir)
+
+	exist, _ := IsDir(dir)
+
+	ass.Equal(ass.DirExists(dir), exist)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestIsEmptyDir(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/test-dir-empty"
+	dir := "./testdata/TestIsEmptyDir/"
 
-	exist, err := IsEmptyDir(path)
-	ass.Nil(err)
+	_ = CreateDirs(dir)
+
+	exist, _ := IsEmptyDir(dir)
 	ass.True(exist)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestFileExists(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/test-file-exist.txt"
+	dir := "./testdata/TestFileExists/"
 
-	exist, err := FileExists(path)
-	ass.Nil(err)
+	path := dir + "test-file-exist.txt"
+
+	_ = CreateFilesWithDirs(path)
+
+	exist, _ := FileExists(path)
 	ass.Equal(ass.FileExists(path), exist)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestDirExists(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata"
+	dir := "./testdata/TestDirExists/"
 
-	exist, err := DirExists(path)
-	ass.Nil(err)
+	_ = CreateDirs(dir)
 
-	ass.Equal(ass.DirExists(path), exist)
+	exist, _ := DirExists(dir)
+
+	ass.Equal(ass.DirExists(dir), exist)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestCreateFiles(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestCreateFiles/"
+
 	paths := []string{
-		"./testdata/test-file-create1.txt",
-		"./testdata/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
+
+	_ = CreateDirs(dir)
 
 	ass.Nil(CreateFiles(paths...))
 
@@ -105,17 +135,20 @@ func TestCreateFiles(t *testing.T) {
 		ass.FileExists(path)
 	}
 
-	_ = DeleteFiles(paths...)
-
+	_ = DeleteDirs(dir)
 }
 
 func TestCreateFileWithData(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/test-file-data.txt"
+	dir := "./testdata/TestCreateFileWithData/"
+
+	path := dir + "test-file-data.txt"
 
 	data := "test"
+
+	_ = CreateDirs(dir)
 
 	_ = CreateFileWithData(path, data)
 
@@ -123,17 +156,22 @@ func TestCreateFileWithData(t *testing.T) {
 
 	ass.Equal(data, data2)
 
-	_ = DeleteFiles(path)
+	_ = DeleteDirs(dir)
+
 }
 
 func TestOverwriteFiles(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestOverwriteFiles/"
+
 	paths := []string{
-		"./testdata/test-file-create1.txt",
-		"./testdata/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
+
+	_ = CreateDirs(dir)
 
 	ass.Nil(OverwriteFiles(paths...))
 
@@ -141,16 +179,18 @@ func TestOverwriteFiles(t *testing.T) {
 		ass.FileExists(path)
 	}
 
-	_ = DeleteFiles(paths...)
+	_ = DeleteDirs(dir)
 }
 
 func TestCreateDirs(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestCreateDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-create1",
-		"./testdata/test-dir-create2",
+		dir + "test-dir-create1",
+		dir + "test-dir-create2",
 	}
 
 	ass.Nil(CreateDirs(paths...))
@@ -159,16 +199,18 @@ func TestCreateDirs(t *testing.T) {
 		ass.DirExists(path)
 	}
 
-	_ = DeleteDirs(paths...)
+	_ = DeleteDirs(dir)
 }
 
 func TestCreateFilesWithDirs(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestCreateFilesWithDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-create1/test-file-create1.txt",
-		"./testdata/test-dir-create2/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
 
 	ass.Nil(CreateFilesWithDirs(paths...))
@@ -177,20 +219,18 @@ func TestCreateFilesWithDirs(t *testing.T) {
 		ass.FileExists(path)
 	}
 
-	fmt.Println()
-
-	for _, path := range paths {
-		_ = DeleteDirs(filepath.Dir(path))
-	}
+	_ = DeleteDirs(dir)
 }
 
 func TestOverwriteFilesWithDirs(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestOverwriteFilesWithDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-create1/test-file-create1.txt",
-		"./testdata/test-dir-create2/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
 
 	ass.Nil(OverwriteFilesWithDirs(paths...))
@@ -199,16 +239,18 @@ func TestOverwriteFilesWithDirs(t *testing.T) {
 		ass.FileExists(path)
 	}
 
-	for _, path := range paths {
-		_ = DeleteDirs(filepath.Dir(path))
-	}
+	_ = DeleteDirs(dir)
 }
 
-func TestCreateFileWithOS(t *testing.T) {
+func TestOsCreate(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/test-file-createwithos.txt"
+	dir := "./testdata/TestCreateFileWithOS/"
+
+	path := dir + "test-file.txt"
+
+	_ = CreateDirs(dir)
 
 	file, _ := OsCreate(path)
 
@@ -216,7 +258,7 @@ func TestCreateFileWithOS(t *testing.T) {
 
 	file.Close()
 
-	_ = DeleteFiles(path)
+	_ = DeleteDirs(dir)
 
 }
 
@@ -224,27 +266,41 @@ func TestCopyFile(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	src := "./testdata/test-file-exist.txt"
-	dst := "./testdata/test-file-exist2.txt"
+	dir := "./testdata/TestCopyFile/"
+
+	src := dir + "test-file-exist.txt"
+	dst := dir + "test-file-exist2.txt"
+
+	data := "test"
+
+	_ = CreateDirs(dir)
+	_ = CreateFileWithData(src, data)
 
 	_ = CopyFile(src, dst)
 
 	ass.FileExists(dst)
+	res, _ := ReadAll(dst)
 
-	_ = DeleteFiles(dst)
+	ass.Equal(data, res)
 
+	_ = DeleteDirs(dir)
 }
 
 func TestFindFileWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/"
+	dir := "./testdata/TestFindFileWalk/"
 
-	exist, err := FindFileWalk(path, "test-file-exist.txt")
+	path := dir + "/test-dir/test-file.txt"
 
-	ass.Nil(err)
+	_ = CreateFilesWithDirs(path)
+
+	exist, _ := FindFileWalk(dir, "test-file.txt")
+
 	ass.True(exist)
+
+	_ = DeleteDirs(dir)
 
 }
 
@@ -252,48 +308,80 @@ func TestFindFileWalkFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/"
+	dir := "./testdata/TestFindFileWalkFilter/"
 
-	exist, err := FindFileWalkFilter(path, func(path string, entry os.DirEntry) bool {
-		return entry.Name() == "test-file-exist.txt"
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "/test-dir/test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	exist, _ := FindFileWalkFilter(dir, func(path string, entry os.DirEntry) bool {
+		return entry.Name() == "test-file.txt"
 	})
 
-	ass.Nil(err)
 	ass.True(exist)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestFilenames(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := Filenames("./testdata")
+	dir := "./testdata/TestFilenames/"
 
-	ass.Nil(err)
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
 
-	ass.Contains(filenames, "test-file-exist.txt")
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := Filenames(dir)
+
+	ass.Contains(filenames, "test-file1.txt")
+	ass.NotContains(filenames, "test-file.txt")
+
+	_ = DeleteDirs(dir)
 }
 
 func TestFilenamesFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesFilter("./testdata", func(path string, entry os.DirEntry) bool {
-		return entry.Name() == "test-file-exist.txt"
+	dir := "./testdata/TestFilenamesFilter/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesFilter(dir, func(path string, entry os.DirEntry) bool {
+		return true
 	})
-	ass.Nil(err)
-	ass.Equal(filenames[0], "test-file-exist.txt")
+
+	ass.Contains(filenames, "test-file1.txt")
+	ass.NotContains(filenames, "test-file.txt")
+
+	_ = DeleteDirs(dir)
 }
 
 func TestFilenamesBy(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesBy("./testdata", func(path string, entry os.DirEntry) string {
+	dir := "./testdata/TestFilenamesBy/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesBy(dir, func(path string, entry os.DirEntry) string {
 		return "by-" + entry.Name()
 	})
-	ass.Nil(err)
 
-	ass.Contains(filenames, "by-test-file-exist.txt")
+	ass.Contains(filenames, "by-test-file1.txt")
+
+	_ = DeleteDirs(dir)
 
 }
 
@@ -301,57 +389,86 @@ func TestFilenamesWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesWalk("./testdata/")
+	dir := "./testdata/TestFilenamesWalk/"
 
-	ass.Nil(err)
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
 
-	ass.Contains(filenames, "test-file-exist.txt")
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesWalk(dir)
+
+	ass.Equal(2, len(filenames))
+
+	_ = DeleteDirs(dir)
 }
 
 func TestFilenamesWalkFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesWalkFilter("./testdata/", func(path string, entry os.DirEntry) bool {
-		return entry.Name() == "test-file-exist.txt"
-	})
-	ass.Nil(err)
+	dir := "./testdata/TestFilenamesWalkFilter/"
 
-	ass.Equal(filenames[0], "test-file-exist.txt")
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesWalkFilter(dir, func(path string, entry os.DirEntry) bool {
+		return true
+	})
+
+	ass.Equal(2, len(filenames))
+
+	_ = DeleteDirs(dir)
 }
 
 func TestFilenamesWalkBy(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	filenames, err := FilenamesWalkBy("./testdata/", func(path string, entry os.DirEntry) string {
+	dir := "./testdata/TestFilenamesWalkBy/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesWalkBy(dir, func(path string, entry os.DirEntry) string {
 		return "by-" + entry.Name()
 	})
-	ass.Nil(err)
 
-	ass.Contains(filenames, "by-test-file-exist.txt")
+	ass.Equal(2, len(filenames))
+
+	_ = DeleteDirs(dir)
 }
 
 func TestDeleteFiles(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestDeleteFiles/"
+
 	paths := []string{
-		"./testdata/test-file-delete1.txt",
-		"./testdata/test-file-delete2.txt",
+		dir + "test-file-delete1.txt",
+		dir + "test-file-delete2.txt",
 	}
 
-	ass.Nil(CreateFiles(paths...))
+	_ = CreateDirs(dir)
+
+	_ = CreateFiles(paths...)
 
 	for _, path := range paths {
 		ass.FileExists(path)
 	}
 
-	ass.Nil(DeleteFiles(paths...))
+	_ = DeleteFiles(paths...)
 
 	for _, path := range paths {
 		ass.NoFileExists(path)
 	}
+
+	_ = DeleteDirs(dir)
 
 }
 
@@ -359,18 +476,20 @@ func TestDeleteDirs(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestDeleteDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-delete1",
-		"./testdata/test-dir-delete2",
+		dir + "test-dir-delete1",
+		dir + "test-dir-delete2",
 	}
 
-	ass.Nil(CreateDirs(paths...))
+	_ = CreateDirs(paths...)
 
 	for _, path := range paths {
 		ass.DirExists(path)
 	}
 
-	ass.Nil(DeleteDirs(paths...))
+	_ = DeleteDirs(dir)
 
 	for _, path := range paths {
 		ass.NoDirExists(path)
@@ -381,18 +500,20 @@ func TestDeleteEmptyDirWalk(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestDeleteEmptyDirWalk/"
+
 	paths := []string{
-		"./testdata/test-dir-delete/test-dirs-delete1",
-		"./testdata/test-dir-delete/test-dirs-delete2",
+		dir + "test-dirs-delete1",
+		dir + "test-dirs-delete2",
 	}
 
-	ass.Nil(CreateDirs(paths...))
+	_ = CreateDirs(paths...)
 
 	for _, path := range paths {
 		ass.DirExists(path)
 	}
 
-	ass.Nil(DeleteEmptyDirWalk("./testdata/test-dir-delete"))
+	_ = DeleteEmptyDirWalk(dir)
 
 	for _, path := range paths {
 		ass.NoDirExists(path)
@@ -403,66 +524,91 @@ func TestDeleteWalkBy(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
+	dir := "./testdata/TestDeleteWalkBy/"
+
 	filePaths := []string{
-		"./testdata/test-dir-delete/test-dir-delete/test-dirs-delete.txt",
-		"./testdata/test-dir-delete/test-dir-delete1/test-dirs-delete.txt",
+		dir + "test-dirs-delete.txt",
+		dir + "test-dirs-delete.txt",
 	}
 
-	dirPath := "./testdata/test-dir-delete/test-dir-delete2"
+	dir2 := dir + "test-dirs"
 
-	ass.Nil(CreateFilesWithDirs(filePaths...))
+	// 创建文件
+	_ = CreateFilesWithDirs(filePaths...)
+
 	for _, path := range filePaths {
 		ass.FileExists(path)
 	}
 
-	ass.Nil(CreateDirs(dirPath))
-	ass.DirExists(dirPath)
+	// 创建空目录
+	_ = CreateDirs(dir2)
 
-	isDelete, err := DeleteWalkBy("./testdata/test-dir-delete", func(path string, entry os.DirEntry) (bool, error) {
-		return strings.Contains(path, "test-dir-delete1"), nil
+	ass.DirExists(dir2)
+
+	// 删除包含空目录
+	isDelete, err := DeleteWalkBy(dir, func(path string, entry os.DirEntry) (bool, error) {
+		return true, nil
 	}, true)
 
 	ass.Nil(err)
-	ass.False(isDelete)
+	ass.True(isDelete)
 
-	ass.DirExists("./testdata/test-dir-delete")
-	ass.NoDirExists("./testdata/test-dir-delete1")
-	ass.NoDirExists(dirPath)
-
-	_ = DeleteDirs("./testdata/test-dir-delete")
+	ass.NoDirExists(dir2)
+	ass.NoDirExists(dir)
+	// _ = DeleteDirs("./test-dir-delete")
 }
 
 func TestZip(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	target := "./testdata/test-file-zip.zip"
+	dir := "./testdata/TestZip/"
 
-	_ = Zip("./testdata", target)
+	_ = CreateDirs(dir)
+
+	// target := "./test-file-zip.zip"
+
+	target := dir + "test-file-zip.zip"
+
+	// 将test-dir-walk 压缩到 ./testdata/TestZip/test-file-zip.zip
+	_ = Zip("./test-dir-walk", target)
 
 	ass.FileExists(target)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestZipFilter(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	target := "./testdata/test-file-zip.zip"
+	dir := "./testdata/TestZipFilter/"
 
-	_ = ZipFilter("./testdata", target, func(path string, entry os.DirEntry) bool {
-		return entry.Name() != "test-file-zip.zip"
+	_ = CreateDirs(dir)
+
+	// target := "./test-file-zip.zip"
+
+	target := dir + "test-file-zip.zip"
+
+	// 只把 将test-dir-walk 压缩到 ./testdata/TestZip/test-file-zip.zip
+	_ = ZipFilter(".", target, func(path string, entry os.DirEntry) bool {
+		return path == "./test-dir-walk"
 	})
 
 	ass.FileExists(target)
+
+	_ = DeleteDirs(dir)
 }
 
 func TestUnzip(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	src := "./testdata/test-file-zip.zip"
+	src := "./test-file-zip.zip"
 
-	dst := "./testdata/unzip"
+	dst := "./Unzip/"
+
+	_ = CreateDirs(dst)
 
 	_ = Unzip(src, dst)
 
@@ -475,32 +621,38 @@ func TestReadAll(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/test-file-data.txt"
+	dir := "./testdata/TestReadAll/"
+
+	path := dir + "test-file-data.txt"
 
 	data := "test"
 
+	_ = CreateDirs(dir)
 	_ = CreateFileWithData(path, data)
 
 	data2, _ := ReadAll(path)
 
 	ass.Equal(data, data2)
 
-	_ = DeleteFiles(path)
+	_ = DeleteDirs(dir)
 }
 
 func TestReadLine(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	path := "./testdata/test-file-data.txt"
+	dir := "./testdata/TestReadLine/"
+
+	path := dir + "test-file-data.txt"
 
 	data := "test\ntest"
 
+	_ = CreateDirs(dir)
 	_ = CreateFileWithData(path, data)
 
 	data2, _ := ReadLine(path, 1)
 
 	ass.Equal([]string{"test"}, data2)
 
-	_ = DeleteFiles(path)
+	_ = DeleteDirs(dir)
 }

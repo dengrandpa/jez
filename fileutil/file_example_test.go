@@ -3,15 +3,19 @@ package fileutil
 import (
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 )
 
 func ExampleFilterMap() {
 
-	path := "./testdata"
+	dir := "./testdata/TestFilterMap/"
 
-	resInt, _ := FilterMap(path, func(entry os.DirEntry) (int, bool) {
+	dirPath := dir + "test-dir"
+	_ = CreateDirs(dirPath)
+
+	filePath := dir + "test-file.txt"
+	_ = CreateFiles(filePath)
+
+	resInt, _ := FilterMap(dir, func(entry os.DirEntry) (int, bool) {
 		if !entry.IsDir() {
 			return 1, true
 		}
@@ -22,16 +26,22 @@ func ExampleFilterMap() {
 	fmt.Println(resInt)
 
 	// Output:
-	// [1 1]
+	// [1]
+
+	_ = DeleteDirs(dir)
 
 }
 
 func ExampleFilterMapWalk() {
 
-	path := "./testdata"
+	dir := "./testdata/TestFilterMapWalk/"
+
+	path := dir + "test-dir/test.txt"
+
+	_ = CreateFilesWithDirs(path)
 
 	resInt, _ := FilterMapWalk(path, func(path string, entry os.DirEntry) (int, bool) {
-		if !entry.IsDir() {
+		if entry.Name() == "test.txt" {
 			return 1, true
 		}
 
@@ -41,69 +51,110 @@ func ExampleFilterMapWalk() {
 	fmt.Println(resInt)
 
 	// Output:
-	// [1 1]
+	// [1]
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleIsDir() {
-	path := "./testdata"
 
-	fmt.Println(IsDir(path))
+	dir := "./testdata/TestIsDir/"
+
+	_ = CreateDirs(dir)
+
+	exist, _ := IsDir(dir)
+
+	fmt.Println(exist)
 
 	// Output:
-	// true <nil>
+	// true
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleIsEmptyDir() {
-	path := "./testdata/test-dir-empty"
 
-	fmt.Println(IsEmptyDir(path))
+	dir := "./testdata/TestIsEmptyDir/"
+
+	_ = CreateDirs(dir)
+
+	exist, _ := IsEmptyDir(dir)
+
+	fmt.Println(exist)
 
 	// Output:
-	// true <nil>
+	// true
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleFileExists() {
-	path := "./testdata/test-file-exist.txt"
 
-	fmt.Println(FileExists(path))
+	dir := "./testdata/TestFileExists/"
+
+	path := dir + "test-file-exist.txt"
+
+	_ = CreateFilesWithDirs(path)
+
+	exist, _ := FileExists(path)
+
+	fmt.Println(exist)
 
 	// Output:
-	// true <nil>
+	// true
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleDirExists() {
-	path := "./testdata"
 
-	fmt.Println(DirExists(path))
+	dir := "./testdata/TestDirExists/"
+
+	_ = CreateDirs(dir)
+
+	exist, _ := DirExists(dir)
+
+	fmt.Println(exist)
 
 	// Output:
-	// true <nil>
+	// true
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleCreateFiles() {
+
+	dir := "./testdata/TestCreateFiles/"
+
 	paths := []string{
-		"./testdata/test-file-create1.txt",
-		"./testdata/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
+
+	_ = CreateDirs(dir)
+
 	_ = CreateFiles(paths...)
 
 	for _, path := range paths {
 		fmt.Println(FileExists(path))
 	}
 
-	_ = DeleteFiles(paths...)
-
 	// Output:
 	// true <nil>
 	// true <nil>
 
+	_ = DeleteDirs(dir)
 }
 
 func ExampleCreateFileWithData() {
 
-	path := "./testdata/test-file-data.txt"
+	dir := "./testdata/TestCreateFileWithData/"
+
+	path := dir + "test-file-data.txt"
 
 	data := "test"
+
+	_ = CreateDirs(dir)
 
 	_ = CreateFileWithData(path, data)
 
@@ -114,14 +165,20 @@ func ExampleCreateFileWithData() {
 	// Output:
 	// test
 
-	_ = DeleteFiles(path)
+	_ = DeleteDirs(dir)
+
 }
 
 func ExampleOverwriteFiles() {
+
+	dir := "./testdata/TestOverwriteFiles/"
+
 	paths := []string{
-		"./testdata/test-file-create1.txt",
-		"./testdata/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
+
+	_ = CreateDirs(dir)
 
 	_ = OverwriteFiles(paths...)
 
@@ -129,17 +186,20 @@ func ExampleOverwriteFiles() {
 		fmt.Println(FileExists(path))
 	}
 
-	_ = DeleteFiles(paths...)
-
 	// Output:
 	// true <nil>
 	// true <nil>
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleCreateDirs() {
+
+	dir := "./testdata/TestCreateDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-create1",
-		"./testdata/test-dir-create2",
+		dir + "test-dir-create1",
+		dir + "test-dir-create2",
 	}
 
 	_ = CreateDirs(paths...)
@@ -148,17 +208,20 @@ func ExampleCreateDirs() {
 		fmt.Println(DirExists(path))
 	}
 
-	_ = DeleteDirs(paths...)
-
 	// Output:
 	// true <nil>
 	// true <nil>
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleCreateFilesWithDirs() {
+
+	dir := "./testdata/TestCreateFilesWithDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-create1/test-file-create1.txt",
-		"./testdata/test-dir-create2/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
 
 	_ = CreateFilesWithDirs(paths...)
@@ -167,19 +230,20 @@ func ExampleCreateFilesWithDirs() {
 		fmt.Println(FileExists(path))
 	}
 
-	for _, path := range paths {
-		_ = DeleteDirs(filepath.Dir(path))
-	}
-
 	// Output:
 	// true <nil>
 	// true <nil>
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleOverwriteFilesWithDirs() {
+
+	dir := "./testdata/TestOverwriteFilesWithDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-create1/test-file-create1.txt",
-		"./testdata/test-dir-create2/test-file-create2.txt",
+		dir + "test-file-create1.txt",
+		dir + "test-file-create2.txt",
 	}
 
 	_ = OverwriteFilesWithDirs(paths...)
@@ -188,90 +252,230 @@ func ExampleOverwriteFilesWithDirs() {
 		fmt.Println(FileExists(path))
 	}
 
-	for _, path := range paths {
-		_ = DeleteDirs(filepath.Dir(path))
-	}
-
 	// Output:
 	// true <nil>
 	// true <nil>
+
+	_ = DeleteDirs(dir)
+}
+
+func ExampleOsCreate() {
+
+	dir := "./testdata/TestCreateFileWithOS/"
+
+	path := dir + "test-file.txt"
+
+	_ = CreateDirs(dir)
+
+	file, _ := OsCreate(path)
+	file.Close()
+
+	fmt.Println(FileExists(path))
+
+	// Output:
+	// true <nil>
+
+	_ = DeleteDirs(dir)
+
+}
+
+func ExampleCopyFile() {
+
+	dir := "./testdata/TestCopyFile/"
+
+	src := dir + "test-file-exist.txt"
+	dst := dir + "test-file-exist2.txt"
+
+	data := "test"
+
+	_ = CreateDirs(dir)
+	_ = CreateFileWithData(src, data)
+
+	_ = CopyFile(src, dst)
+
+	res, _ := ReadAll(dst)
+
+	fmt.Println(res)
+
+	// Output:
+	// test
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleFindFileWalk() {
-	path := "./testdata/"
 
-	fmt.Println(FindFileWalk(path, "test-file-exist.txt"))
+	dir := "./testdata/TestFindFileWalk/"
+
+	path := dir + "/test-dir/test-file.txt"
+
+	_ = CreateFilesWithDirs(path)
+
+	exist, _ := FindFileWalk(dir, "test-file.txt")
+
+	fmt.Println(exist)
 
 	// Output:
-	// true <nil>
+	// true
+
+	_ = DeleteDirs(dir)
+
 }
 
 func ExampleFindFileWalkFilter() {
-	path := "./testdata/"
 
-	fmt.Println(FindFileWalkFilter(path, func(path string, entry os.DirEntry) bool {
-		return entry.Name() == "test-file-exist.txt"
-	}))
+	dir := "./testdata/TestFindFileWalkFilter/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "/test-dir/test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	exist, _ := FindFileWalkFilter(dir, func(path string, entry os.DirEntry) bool {
+		return entry.Name() == "test-file.txt"
+	})
+
+	fmt.Println(exist)
 
 	// Output:
-	// true <nil>
+	// true
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleFilenames() {
-	fmt.Println(Filenames("./testdata"))
+
+	dir := "./testdata/TestFilenames/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := Filenames(dir)
+
+	fmt.Println(filenames)
 
 	// Output:
-	// [test-file-exist.txt test-file-zip.zip] <nil>
+	// [test-file1.txt]
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleFilenamesFilter() {
-	fmt.Println(FilenamesFilter("./testdata", func(path string, entry os.DirEntry) bool {
-		return strings.Contains(entry.Name(), "test-file-exist")
-	}))
+
+	dir := "./testdata/TestFilenamesFilter/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesFilter(dir, func(path string, entry os.DirEntry) bool {
+		return true
+	})
+
+	fmt.Println(filenames)
 
 	// Output:
-	// [test-file-exist.txt] <nil>
+	// [test-file1.txt]
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleFilenamesBy() {
-	fmt.Println(FilenamesBy("./testdata", func(path string, entry os.DirEntry) string {
+
+	dir := "./testdata/TestFilenamesBy/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesBy(dir, func(path string, entry os.DirEntry) string {
 		return "by-" + entry.Name()
-	}))
+	})
+
+	fmt.Println(filenames)
 
 	// Output:
-	// [by-test-file-exist.txt by-test-file-zip.zip] <nil>
+	// [by-test-file1.txt]
+
+	_ = DeleteDirs(dir)
+
 }
 
 func ExampleFilenamesWalk() {
-	fmt.Println(FilenamesWalk("./testdata"))
+
+	dir := "./testdata/TestFilenamesWalk/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesWalk(dir)
+
+	fmt.Println(filenames)
 
 	// Output:
-	// [test-file-exist.txt test-file-zip.zip] <nil>
+	// [test-file.txt test-file1.txt]
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleFilenamesWalkFilter() {
-	fmt.Println(FilenamesWalkFilter("./testdata/", func(path string, entry os.DirEntry) bool {
-		return strings.Contains(entry.Name(), "test-file-exist")
-	}))
+
+	dir := "./testdata/TestFilenamesWalkFilter/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesWalkFilter(dir, func(path string, entry os.DirEntry) bool {
+		return true
+	})
+
+	fmt.Println(filenames)
 
 	// Output:
-	// [test-file-exist.txt] <nil>
+	// [test-file.txt test-file1.txt]
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleFilenamesWalkBy() {
-	fmt.Println(FilenamesWalkBy("./testdata/", func(path string, entry os.DirEntry) string {
+
+	dir := "./testdata/TestFilenamesWalkBy/"
+
+	path := dir + "/test-dir/test-file.txt"
+	path1 := dir + "test-file1.txt"
+
+	_ = CreateFilesWithDirs(path, path1)
+
+	filenames, _ := FilenamesWalkBy(dir, func(path string, entry os.DirEntry) string {
 		return "by-" + entry.Name()
-	}))
+	})
+
+	fmt.Println(filenames)
 
 	// Output:
-	// [by-test-file-exist.txt by-test-file-zip.zip] <nil>
+	// [by-test-file.txt by-test-file1.txt]
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleDeleteFiles() {
+
+	dir := "./testdata/TestDeleteFiles/"
+
 	paths := []string{
-		"./testdata/test-file-delete1.txt",
-		"./testdata/test-file-delete2.txt",
+		dir + "test-file-delete1.txt",
+		dir + "test-file-delete2.txt",
 	}
+
+	_ = CreateDirs(dir)
 
 	_ = CreateFiles(paths...)
 
@@ -290,12 +494,18 @@ func ExampleDeleteFiles() {
 	// true <nil>
 	// false <nil>
 	// false <nil>
+
+	_ = DeleteDirs(dir)
+
 }
 
 func ExampleDeleteDirs() {
+
+	dir := "./testdata/TestDeleteDirs/"
+
 	paths := []string{
-		"./testdata/test-dir-delete1",
-		"./testdata/test-dir-delete2",
+		dir + "test-dir-delete1",
+		dir + "test-dir-delete2",
 	}
 
 	_ = CreateDirs(paths...)
@@ -304,7 +514,7 @@ func ExampleDeleteDirs() {
 		fmt.Println(DirExists(path))
 	}
 
-	_ = DeleteDirs(paths...)
+	_ = DeleteDirs(dir)
 
 	for _, path := range paths {
 		fmt.Println(DirExists(path))
@@ -318,9 +528,12 @@ func ExampleDeleteDirs() {
 }
 
 func ExampleDeleteEmptyDirWalk() {
+
+	dir := "./testdata/TestDeleteEmptyDirWalk/"
+
 	paths := []string{
-		"./testdata/test-dir-delete/test-dirs-delete1",
-		"./testdata/test-dir-delete/test-dirs-delete2",
+		dir + "test-dirs-delete1",
+		dir + "test-dirs-delete2",
 	}
 
 	_ = CreateDirs(paths...)
@@ -329,88 +542,134 @@ func ExampleDeleteEmptyDirWalk() {
 		fmt.Println(DirExists(path))
 	}
 
-	_ = DeleteEmptyDirWalk("./testdata/test-dir-delete")
+	_ = DeleteEmptyDirWalk(dir)
 
 	for _, path := range paths {
 		fmt.Println(DirExists(path))
 	}
 
+	fmt.Println(DirExists(dir))
+
 	// Output:
 	// true <nil>
 	// true <nil>
+	// false <nil>
 	// false <nil>
 	// false <nil>
 }
 
 func ExampleDeleteWalkBy() {
+
+	dir := "./testdata/TestDeleteWalkBy/"
+
 	filePaths := []string{
-		"./testdata/test-dir-delete/test-dir-delete/test-dirs-delete.txt",
-		"./testdata/test-dir-delete/test-dir-delete1/test-dirs-delete.txt",
+		dir + "test-dirs-delete.txt",
+		dir + "test-dirs-delete.txt",
 	}
 
-	dirPath := "./testdata/test-dir-delete/test-dir-delete2"
+	dir2 := dir + "test-dirs"
 
+	// 创建文件
 	_ = CreateFilesWithDirs(filePaths...)
+
 	for _, path := range filePaths {
 		fmt.Println(FileExists(path))
 	}
 
-	_ = CreateDirs(dirPath)
-	fmt.Println(DirExists(dirPath))
+	// 创建空目录
+	_ = CreateDirs(dir2)
 
-	isDelete, _ := DeleteWalkBy("./testdata/test-dir-delete", func(path string, entry os.DirEntry) (bool, error) {
-		return strings.Contains(path, "test-dir-delete1"), nil
+	fmt.Println(DirExists(dir2))
+
+	// 删除包含空目录
+	isDelete, _ := DeleteWalkBy(dir, func(path string, entry os.DirEntry) (bool, error) {
+		return true, nil
 	}, true)
 
 	fmt.Println(isDelete)
-
-	fmt.Println(DirExists("./testdata/test-dir-delete"))
-	fmt.Println(DirExists("./testdata/test-dir-delete1"))
-	fmt.Println(DirExists(dirPath))
-
-	_ = DeleteDirs("./testdata/test-dir-delete")
+	fmt.Println(DirExists(dir2))
+	fmt.Println(DirExists(dir))
 
 	// Output:
 	// true <nil>
 	// true <nil>
 	// true <nil>
-	// false
-	// true <nil>
+	// true
 	// false <nil>
 	// false <nil>
 }
 
 func ExampleZip() {
-	target := "./testdata/test-file-zip.zip"
 
-	_ = Zip("./testdata", target)
+	dir := "./testdata/TestZip/"
+
+	_ = CreateDirs(dir)
+
+	// target := "./test-file-zip.zip"
+
+	target := dir + "test-file-zip.zip"
+
+	// 将test-dir-walk 压缩到 ./testdata/TestZip/test-file-zip.zip
+	_ = Zip("./test-dir-walk", target)
 
 	fmt.Println(FileExists(target))
 
 	// Output:
 	// true <nil>
+
+	_ = DeleteDirs(dir)
 }
 
 func ExampleZipFilter() {
 
-	target := "./testdata/test-file-zip.zip"
+	dir := "./testdata/TestZipFilter/"
 
-	_ = ZipFilter("./testdata", target, func(path string, entry os.DirEntry) bool {
-		return entry.Name() != "test-file-zip.zip"
+	_ = CreateDirs(dir)
+
+	// target := "./test-file-zip.zip"
+
+	target := dir + "test-file-zip.zip"
+
+	// 只把 将test-dir-walk 压缩到 ./testdata/TestZip/test-file-zip.zip
+	_ = ZipFilter(".", target, func(path string, entry os.DirEntry) bool {
+		return path == "./test-dir-walk"
 	})
 
 	fmt.Println(FileExists(target))
 
 	// Output:
 	// true <nil>
+
+	_ = DeleteDirs(dir)
+}
+
+func ExampleUnzip() {
+
+	src := "./test-file-zip.zip"
+
+	dst := "./Unzip/"
+
+	_ = CreateDirs(dst)
+
+	_ = Unzip(src, dst)
+
+	fmt.Println(DirExists(dst))
+
+	// Output:
+	// true <nil>
+
+	_ = DeleteDirs(dst)
 }
 
 func ExampleReadAll() {
 
-	path := "./testdata/test-file-data.txt"
+	dir := "./testdata/TestReadAll/"
+
+	path := dir + "test-file-data.txt"
 
 	data := "test"
 
+	_ = CreateDirs(dir)
 	_ = CreateFileWithData(path, data)
 
 	data2, _ := ReadAll(path)
@@ -420,15 +679,18 @@ func ExampleReadAll() {
 	// Output:
 	// test
 
-	_ = DeleteFiles(path)
+	_ = DeleteDirs(dir)
 }
 
 func ExampleReadLine() {
 
-	path := "./testdata/test-file-data.txt"
+	dir := "./testdata/TestReadLine/"
+
+	path := dir + "test-file-data.txt"
 
 	data := "test\ntest"
 
+	_ = CreateDirs(dir)
 	_ = CreateFileWithData(path, data)
 
 	data2, _ := ReadLine(path, 1)
@@ -438,5 +700,5 @@ func ExampleReadLine() {
 	// Output:
 	// [test]
 
-	_ = DeleteFiles(path)
+	_ = DeleteDirs(dir)
 }

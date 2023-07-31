@@ -283,3 +283,12 @@ func SubTimestamp(t1, t2 int64) (days, hours, minutes, seconds int) {
 
 	return days, hours, minutes, seconds
 }
+
+func CST() *time.Location {
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	return loc
+}
+
+func ToCST(t time.Time) time.Time {
+	return t.In(CST())
+}

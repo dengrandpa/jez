@@ -12,37 +12,37 @@ func TestParseTime(t *testing.T) {
 	ass := assert.New(t)
 
 	ass.Equal(
-		time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local),
-		ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS))
+		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
+		ToCST(ParseTime("2022-01-02 03:04:05", YYYYMMDDHHMMSS)))
 
 	ass.Equal(
-		time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local),
-		ParseTime("2022/01/02 03:04:05", YYYYMMDDHHMMSS2))
+		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
+		ToCST(ParseTime("2022/01/02 03:04:05", YYYYMMDDHHMMSS2)))
 
 	ass.Equal(
-		time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
-		ParseTime("2022-01", YYYYMM))
+		time.Date(2022, 1, 1, 0, 0, 0, 0, CST()),
+		ToCST(ParseTime("2022-01", YYYYMM)))
 
 	ass.Equal(
-		time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local),
-		ParseTime("2022-01-02", YYYYMMDD))
+		time.Date(2022, 1, 2, 0, 0, 0, 0, CST()),
+		ToCST(ParseTime("2022-01-02", YYYYMMDD)))
 
 	ass.Equal(
-		time.Date(0, 1, 1, 3, 4, 5, 0, time.Local),
-		ParseTime("03:04:05", HHMMSS))
+		time.Date(0, 1, 1, 3, 4, 5, 0, CST()),
+		ToCST(ParseTime("03:04:05", HHMMSS)))
 
 	ass.Equal(
-		time.Date(0, 1, 1, 3, 4, 0, 0, time.Local),
-		ParseTime("03:04", HHMM))
+		time.Date(0, 1, 1, 3, 4, 0, 0, CST()),
+		ToCST(ParseTime("03:04", HHMM)))
 }
 
 func TestParseTimestamp(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
-	ass.Equal(tm, ParseTimestamp(1641063845))
+	ass.Equal(tm, ToCST(ParseTimestamp(tm.Unix())))
 
 }
 
@@ -50,7 +50,7 @@ func TestStartOfMinute(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := StartOfMinute(tm)
 
@@ -62,7 +62,7 @@ func TestEndOfMinute(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := EndOfMinute(tm)
 
@@ -73,7 +73,7 @@ func TestStartOfHour(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := StartOfHour(tm)
 
@@ -85,7 +85,7 @@ func TestEndOfHour(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := EndOfHour(tm)
 
@@ -97,7 +97,7 @@ func TestStartOfDay(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := StartOfDay(tm)
 
@@ -110,7 +110,7 @@ func TestEndOfDay(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := EndOfDay(tm)
 
@@ -123,7 +123,7 @@ func TestStartOfWeekMonday(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 	res := StartOfWeekMonday(tm)
 
 	ass.Equal(0, res.Second())
@@ -136,7 +136,7 @@ func TestEndOfWeekSunday(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := EndOfWeekSunday(tm)
 
@@ -150,7 +150,7 @@ func TestStartOfWeekSunday(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := StartOfWeekSunday(tm)
 
@@ -164,7 +164,7 @@ func TestEndOfWeekMonday(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := EndOfWeekMonday(tm)
 
@@ -178,7 +178,7 @@ func TestStartOfMonth(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := StartOfMonth(tm)
 
@@ -192,7 +192,7 @@ func TestEndOfMonth(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := EndOfMonth(tm)
 
@@ -206,7 +206,7 @@ func TestStartOfYear(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := StartOfYear(tm)
 
@@ -221,7 +221,7 @@ func TestEndOfYear(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	res := EndOfYear(tm)
 
@@ -236,7 +236,7 @@ func TestAddSecond(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal(15, AddSecond(tm, 10).Second())
 }
@@ -245,7 +245,7 @@ func TestAddMinute(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal(14, AddMinute(tm, 10).Minute())
 }
@@ -254,7 +254,7 @@ func TestAddHour(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal(13, AddHour(tm, 10).Hour())
 }
@@ -263,7 +263,7 @@ func TestAddDay(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal(12, AddDay(tm, 10).Day())
 }
@@ -272,7 +272,7 @@ func TestAddWeek(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal(tm.Weekday(), AddWeek(tm, 7).Weekday())
 }
@@ -281,7 +281,7 @@ func TestAddMonth(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal(time.November, AddMonth(tm, 10).Month())
 }
@@ -290,7 +290,7 @@ func TestAddYear(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal(2032, AddYear(tm, 10).Year())
 }
@@ -299,7 +299,7 @@ func TestFormatTime(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
+	tm := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
 
 	ass.Equal("2022-01-02 03:04:05", FormatTime(tm))
 	ass.Equal("2022/01/02 03:04:05", FormatTime(tm, YYYYMMDDHHMMSS2))
@@ -309,9 +309,10 @@ func TestFormatTimestamp(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	ass.Equal("2022-01-02 03:04:05", FormatTimestamp(1641063845))
-	ass.Equal("2022/01/02 03:04:05", FormatTimestamp(1641063845, YYYYMMDDHHMMSS2))
+	timestamp := time.Date(2022, 1, 2, 3, 4, 5, 0, CST()).Unix()
 
+	ass.Equal("2022-01-02 03:04:05", FormatTimestamp(timestamp))
+	ass.Equal("2022/01/02 03:04:05", FormatTimestamp(timestamp, YYYYMMDDHHMMSS2))
 }
 
 func TestFormatNow(t *testing.T) {
@@ -342,13 +343,13 @@ func TestRangeHours(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2022, 1, 2, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2022, 1, 2, 5, 55, 44, 0, CST())
 
 	res := []time.Time{
-		time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local),
-		time.Date(2022, 1, 2, 4, 4, 5, 0, time.Local),
-		time.Date(2022, 1, 2, 5, 4, 5, 0, time.Local),
+		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
+		time.Date(2022, 1, 2, 4, 4, 5, 0, CST()),
+		time.Date(2022, 1, 2, 5, 4, 5, 0, CST()),
 	}
 
 	ass.Equal(res, RangeHours(tm1, tm2))
@@ -358,13 +359,13 @@ func TestRangeDays(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2022, 1, 4, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2022, 1, 4, 5, 55, 44, 0, CST())
 
 	res := []time.Time{
-		time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local),
-		time.Date(2022, 1, 3, 3, 4, 5, 0, time.Local),
-		time.Date(2022, 1, 4, 3, 4, 5, 0, time.Local),
+		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
+		time.Date(2022, 1, 3, 3, 4, 5, 0, CST()),
+		time.Date(2022, 1, 4, 3, 4, 5, 0, CST()),
 	}
 
 	ass.Equal(res, RangeDays(tm1, tm2))
@@ -374,13 +375,13 @@ func TestRangeMonths(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2022, 3, 4, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2022, 3, 4, 5, 55, 44, 0, CST())
 
 	res := []time.Time{
-		time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local),
-		time.Date(2022, 2, 2, 3, 4, 5, 0, time.Local),
-		time.Date(2022, 3, 2, 3, 4, 5, 0, time.Local),
+		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
+		time.Date(2022, 2, 2, 3, 4, 5, 0, CST()),
+		time.Date(2022, 3, 2, 3, 4, 5, 0, CST()),
 	}
 
 	ass.Equal(res, RangeMonths(tm1, tm2))
@@ -390,13 +391,13 @@ func TestRangeYears(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local)
-	tm2 := time.Date(2024, 2, 4, 5, 55, 44, 0, time.Local)
+	tm1 := time.Date(2022, 1, 2, 3, 4, 5, 0, CST())
+	tm2 := time.Date(2024, 2, 4, 5, 55, 44, 0, CST())
 
 	res := []time.Time{
-		time.Date(2022, 1, 2, 3, 4, 5, 0, time.Local),
-		time.Date(2023, 1, 2, 3, 4, 5, 0, time.Local),
-		time.Date(2024, 1, 2, 3, 4, 5, 0, time.Local),
+		time.Date(2022, 1, 2, 3, 4, 5, 0, CST()),
+		time.Date(2023, 1, 2, 3, 4, 5, 0, CST()),
+		time.Date(2024, 1, 2, 3, 4, 5, 0, CST()),
 	}
 
 	ass.Equal(res, RangeYears(tm1, tm2))
@@ -407,16 +408,16 @@ func TestNewTime(t *testing.T) {
 	ass := assert.New(t)
 
 	ass.Equal(time.Now().Unix(), NewTime().Unix())
-	ass.Equal(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), NewTime(2022, 1, 2))
-	ass.Equal(time.Date(2022, 0, 0, 0, 0, 0, 0, time.Local), NewTime(2022))
+	ass.Equal(time.Date(2022, 1, 2, 0, 0, 0, 0, CST()), ToCST(NewTime(2022, 1, 2)))
+	ass.Equal(time.Date(2022, 0, 0, 0, 0, 0, 0, CST()), ToCST(NewTime(2022)))
 }
 
 func TestSubTime(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, time.Local)
-	t2 := time.Date(2023, 1, 2, 1, 59, 6, 0, time.Local)
+	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, CST())
+	t2 := time.Date(2023, 1, 2, 1, 59, 6, 0, CST())
 
 	day, hour, min, sec := SubTime(t2, t1)
 
@@ -430,8 +431,8 @@ func TestSubTimestamp(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, time.Local)
-	t2 := time.Date(2022, 1, 33, 1, 59, 6, 0, time.Local)
+	t1 := time.Date(2022, 1, 2, 22, 0, 0, 0, CST())
+	t2 := time.Date(2022, 1, 33, 1, 59, 6, 0, CST())
 
 	day, hour, min, sec := SubTimestamp(t1.Unix(), t2.Unix())
 
@@ -439,4 +440,27 @@ func TestSubTimestamp(t *testing.T) {
 	ass.Equal(3, hour)
 	ass.Equal(59, min)
 	ass.Equal(6, sec)
+}
+
+func TestCST(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	local := CST()
+
+	ass.Equal("Asia/Shanghai", local.String())
+}
+
+func TestToCST(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	t1 := time.Date(2022, 1, 2, 3, 4, 5, 0, time.UTC)
+
+	t2 := time.Date(2022, 1, 2, 11, 4, 5, 0, CST())
+
+	t3 := ToCST(t1)
+
+	ass.Equal(t2, t3)
+
 }
