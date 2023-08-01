@@ -131,6 +131,31 @@ func TestRandomInt(t *testing.T) {
 
 	ass.Less(res, max)
 	ass.GreaterOrEqual(res, min)
+
+	res1 := RandomInt(max, min)
+	ass.Less(res1, max)
+	ass.GreaterOrEqual(res1, min)
+
+	ass.Equal(RandomInt(min, min), 10)
+}
+
+func testRandomIntSlice(ass *assert.Assertions, min, max int) {
+	res := RandomIntSlice(min, max, 10)
+
+	if min > max {
+		max, min = min, max
+	}
+
+	ok := true
+	for _, r := range res {
+		if r < min || r >= max {
+			ok = false
+			break
+		}
+	}
+
+	ass.True(ok)
+	ass.Len(res, 10)
 }
 
 func TestRandomIntSlice(t *testing.T) {
@@ -142,32 +167,19 @@ func TestRandomIntSlice(t *testing.T) {
 
 	ass.Panics(func() { RandomIntSlice(min, max, 0) })
 
-	res := RandomIntSlice(min, max, 10)
+	testRandomIntSlice(ass, max, min)
 
-	ok := true
-	for _, r := range res {
-		if r < min || r >= max {
-			ok = false
-			break
-		}
-	}
+	testRandomIntSlice(ass, min, max)
 
-	ass.True(ok)
-
-	ass.Len(res, 10)
+	ass.Equal(RandomIntSlice(min, min, 2), []int{min, min})
 }
 
-func TestRandomIntSliceUnique(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	min := 10
-	max := 15
-
-	ass.Panics(func() { RandomIntSliceUnique(min, max, 0) })
-	ass.Panics(func() { RandomIntSliceUnique(min, max, 10) })
-
+func testRandomIntSliceUnique(ass *assert.Assertions, min, max int) {
 	res := RandomIntSliceUnique(min, max, 5)
+
+	if min > max {
+		max, min = min, max
+	}
 
 	var (
 		ok    = true
@@ -188,6 +200,22 @@ func TestRandomIntSliceUnique(t *testing.T) {
 
 	ass.True(ok)
 	ass.Len(res, 5)
+}
+
+func TestRandomIntSliceUnique(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	min := 10
+	max := 15
+
+	ass.Panics(func() { RandomIntSliceUnique(min, max, 0) })
+	ass.Panics(func() { RandomIntSliceUnique(min, max, 10) })
+
+	testRandomIntSliceUnique(ass, max, min)
+	testRandomIntSliceUnique(ass, min, max)
+
+	ass.Equal(RandomIntSliceUnique(min, min, 1), []int{10})
 }
 
 func TestRandomBytes(t *testing.T) {

@@ -44,7 +44,11 @@ func Random(s string, n int, unique ...bool) string {
 			panic("n must be less than or equal to the length of s")
 		}
 
-		indices := rand.Perm(size)[:n]
+		indices := rand.Perm(size)
+
+		if len(indices)-n > 0 {
+			indices = indices[:n]
+		}
 
 		for i, idx := range indices {
 			b[i] = s[idx]
@@ -143,15 +147,19 @@ func RandomIntSlice(min, max, n int) []int {
 		panic("n must be greater than 0")
 	}
 
-	if min == max {
-		return []int{min}
-	}
-
 	if max < min {
 		min, max = max, min
 	}
 
 	s := make([]int, n)
+
+	if max == min {
+		for i := range s {
+			s[i] = min
+		}
+
+		return s
+	}
 
 	for i := range s {
 		s[i] = rand.Intn(max-min) + min
@@ -210,7 +218,7 @@ func RandomBytes(n int) []byte {
 	b := make([]byte, n)
 
 	if _, err := rand.Read(b); err != nil {
-		return nil
+		panic(err)
 	}
 
 	return b
