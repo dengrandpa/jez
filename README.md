@@ -1,4 +1,4 @@
-# jez
+# jez - 一些简单且常用的包...
 
 ![GitHub go.mod Go version (subdirectory of monorepo)](https://img.shields.io/github/go-mod/go-version/dengrandpa/jez)
 [![codecov](https://codecov.io/gh/dengrandpa/jez/branch/main/graph/badge.svg?token=E3LRLIYTK2)](https://codecov.io/gh/dengrandpa/jez)

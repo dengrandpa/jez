@@ -12,7 +12,7 @@ import (
 
 var walkFind = errors.New("find")
 
-// 等同于 "os.ReadDir"， 删除了排序
+// 等同于 os.ReadDir， 删除了排序
 func osReadDir(dirPath string) ([]os.DirEntry, error) {
 	f, err := os.Open(dirPath)
 	if err != nil {
@@ -23,7 +23,7 @@ func osReadDir(dirPath string) ([]os.DirEntry, error) {
 	return f.ReadDir(-1)
 }
 
-// FilterMap 遍历当前目录，对每个文件调用 "iteratee"，如果返回 "true"，则将结果放入结果集中
+// FilterMap 遍历当前目录，对每个文件调用 iteratee，如果返回 true，则将结果放入结果集中
 func FilterMap[T any](dirPath string, iteratee func(entry os.DirEntry) (T, bool)) ([]T, error) {
 	entries, err := osReadDir(dirPath)
 	if err != nil {
@@ -41,7 +41,7 @@ func FilterMap[T any](dirPath string, iteratee func(entry os.DirEntry) (T, bool)
 	return result, nil
 }
 
-// FilterMapWalk 返回遍历所有目录、子目录，对每个文件调用 "iteratee"，如果返回 "true"，则将结果放入结果集中
+// FilterMapWalk 返回遍历所有目录、子目录，对每个文件调用 iteratee，如果返回 true，则将结果放入结果集中
 func FilterMapWalk[T any](dirPath string, iteratee func(path string, d os.DirEntry) (T, bool)) ([]T, error) {
 
 	var result []T
@@ -103,7 +103,7 @@ func DirExists(dirPath string) (bool, error) {
 	return isDir, nil
 }
 
-// OsCreate 等同于 "os.Create",创建文件，如果文件已存在，则忽略，使用完毕后需要关闭
+// OsCreate 等同于 os.Create,创建文件，如果文件已存在，则忽略，使用完毕后需要关闭
 func OsCreate(filePath string) (*os.File, error) {
 	return os.Create(filePath)
 }
@@ -217,7 +217,7 @@ func FindFileWalk(dirPath, filename string) (bool, error) {
 	return false, err
 }
 
-// FindFileWalkFilter 遍历目录、子目录，查找文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则表示找到了
+// FindFileWalkFilter 遍历目录、子目录，查找文件，对每个文件调用 iteratee 函数，如果返回 true，则表示找到了
 func FindFileWalkFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) (bool, error) {
 
 	err := filepath.WalkDir(dirPath, func(path string, entry os.DirEntry, err error) error {
@@ -257,7 +257,7 @@ func Filenames(dirPath string) ([]string, error) {
 	return names, nil
 }
 
-// FilenamesFilter 遍历目录下的文件，对每个文件调用 "iteratee" 函数，如果返回 "true"，则将文件名添加到切片中
+// FilenamesFilter 遍历目录下的文件，对每个文件调用 iteratee 函数，如果返回 true，则将文件名添加到切片中
 func FilenamesFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) ([]string, error) {
 	entries, err := osReadDir(dirPath)
 	if err != nil {
@@ -273,7 +273,7 @@ func FilenamesFilter(dirPath string, iteratee func(path string, entry os.DirEntr
 	return names, nil
 }
 
-// FilenamesBy 遍历目录下的文件，对每个文件调用 "iteratee" 函数，将返回的字符串添加到切片中
+// FilenamesBy 遍历目录下的文件，对每个文件调用 iteratee 函数，将返回的字符串添加到切片中
 func FilenamesBy(dirPath string, iteratee func(path string, entry os.DirEntry) string) ([]string, error) {
 	entries, err := osReadDir(dirPath)
 	if err != nil {
@@ -309,7 +309,7 @@ func FilenamesWalk(dirPath string) ([]string, error) {
 	return names, err
 }
 
-// FilenamesWalkFilter 返回目录下的文件，包含子目录，对每个文件调用 "iteratee" 函数，如果返回 "true"，则将文件名添加到切片中
+// FilenamesWalkFilter 返回目录下的文件，包含子目录，对每个文件调用 iteratee 函数，如果返回 true，则将文件名添加到切片中
 func FilenamesWalkFilter(dirPath string, iteratee func(path string, entry os.DirEntry) bool) ([]string, error) {
 	var names []string
 
@@ -329,7 +329,7 @@ func FilenamesWalkFilter(dirPath string, iteratee func(path string, entry os.Dir
 	return names, err
 }
 
-// FilenamesWalkBy 返回目录下的文件，包含子目录，对每个文件调用 "iteratee" 函数，将返回的字符串添加到切片中
+// FilenamesWalkBy 返回目录下的文件，包含子目录，对每个文件调用 iteratee 函数，将返回的字符串添加到切片中
 func FilenamesWalkBy(dirPath string, iteratee func(path string, entry os.DirEntry) string) ([]string, error) {
 	var names []string
 
@@ -371,17 +371,26 @@ func DeleteDirs(dirPaths ...string) error {
 
 // DeleteEmptyDirWalk 返回删除空目录，包含子目录
 //
-// 注意：例如 "/a/b"，当删除 "b" 时，如果 "a" 也是一个空目录，也会被删除
+// 例如：
+//   - /a/b，当删除 b 时，如果 a 也是一个空目录，也会被删除
 func DeleteEmptyDirWalk(dirPath string) error {
 	_, err := DeleteWalkBy(dirPath, nil, true)
 	return err
 }
 
-// DeleteWalkBy 是一个递归删除实现，从给定的目录路径开始递归地删除文件和目录，对每个文件（不包括目录）调用"iteratee"函数。
+// DeleteWalkBy 递归删除指定目录下的文件和子目录
 //
-// "iteratee" 函数接受文件（不包括目录）路径和 os.DirEntry 实例作为参数，并返回当前目录是否已被删除。
-// 如果要删除空目录，请注意 bool 返回值，错误的 bool 返回值可能导致文件意外删除或空目录删除失败。
-// "withEmptyDir" 参数用于指定是否删除空目录。
+// 参数：
+//   - dirPath: 目录路径
+//   - iteratee: 遍历函数，用于处理每个文件（不包括目录）的逻辑，接收文件路径和 os.DirEntry 实例作为参数
+//   - withEmptyDir: 可选参数，指定是否删除空目录，默认为 false
+//
+// 返回值：
+//   - bool: 当前目录是否已被删除
+//   - error: 错误
+//
+// 注意事项：
+//   - 如果要删除空目录，请注意 bool 返回值，错误的 bool 返回值可能导致文件意外删除或空目录删除失败。
 func DeleteWalkBy(
 	dirPath string, iteratee func(path string, entry os.DirEntry) (bool, error), withEmptyDir ...bool) (bool, error) {
 
@@ -484,7 +493,7 @@ func Zip(src, dst string) error {
 	})
 }
 
-// ZipFilter 对每个文件或目录调用 "iteratee" 函数，如果返回 true，则将其压缩到 zip 文件中，如果zip文件已存在，则会被覆盖。
+// ZipFilter 对每个文件或目录调用 iteratee 函数，如果返回 true，则将其压缩到 zip 文件中，如果zip文件已存在，则会被覆盖。
 func ZipFilter(src, dst string, iteratee func(path string, entry os.DirEntry) bool) error {
 	zipFile, err := OsCreate(dst)
 	if err != nil {
@@ -594,7 +603,7 @@ func ReadAll(filePath string) (string, error) {
 	return string(b), nil
 }
 
-// ReadLine 读取文件的前"n"行，如果 "n" < 0，则读取所有行。
+// ReadLine 读取文件的前 n 行，如果 n < 0，则读取所有行。
 func ReadLine(filePath string, n int) ([]string, error) {
 	if n == 0 {
 		return []string{}, nil
