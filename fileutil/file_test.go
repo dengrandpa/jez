@@ -31,6 +31,9 @@ func Test_osReadDir(t *testing.T) {
 	_ = DeleteDirs(dir)
 
 	ass.True(ok)
+
+	_, err1 := osReadDir("err")
+	ass.Error(err1)
 }
 
 func TestFilterMap(t *testing.T) {
@@ -56,6 +59,11 @@ func TestFilterMap(t *testing.T) {
 	ass.Nil(err)
 
 	ass.Equal([]int{1}, resInt)
+
+	_, err1 := FilterMap("err", func(entry os.DirEntry) (int, bool) {
+		return 0, true
+	})
+	ass.Error(err1)
 
 	_ = DeleteDirs(dir)
 
@@ -116,7 +124,11 @@ func TestIsEmptyDir(t *testing.T) {
 	ass.Nil(err)
 	ass.True(exist)
 
+	_, err1 := IsEmptyDir("err")
+	ass.Error(err1)
+
 	_ = DeleteDirs(dir)
+
 }
 
 func TestFileExists(t *testing.T) {
@@ -622,15 +634,17 @@ func TestZipFilter(t *testing.T) {
 
 	dir := "./testdata/TestZipFilter/"
 
-	_ = CreateDirs(dir)
+	path := dir + "test-dir1/test-dir2/test-file.txt"
+
+	ass.Nil(CreateFilesWithDirs(path))
 
 	// target := "./test-file-zip.zip"
 
 	target := dir + "test-file-zip.zip"
 
 	// 只把 将test-dir-walk 压缩到 ./testdata/TestZip/test-file-zip.zip
-	_ = ZipFilter(".", target, func(path string, entry os.DirEntry) bool {
-		return path == "./test-dir-walk"
+	_ = ZipFilter(dir+"test-dir1/", target, func(path string, entry os.DirEntry) bool {
+		return true
 	})
 
 	ass.FileExists(target)
@@ -642,13 +656,17 @@ func TestUnzip(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	src := "./test-file-zip.zip"
+	zipPath := "./testdata/Unzip/test-dir1/test-dir2/test-dir3/test-file.txt"
 
-	dst := "./Unzip/"
+	ass.Nil(CreateFilesWithDirs(zipPath))
 
-	_ = CreateDirs(dst)
+	src := "./testdata/Unzip/test-unzip.zip"
 
-	_ = Unzip(src, dst)
+	ass.Nil(Zip("./testdata/Unzip/test-dir1/test-dir2", src))
+
+	dst := "./testdata/Unzip/"
+
+	ass.Nil(Unzip(src, dst))
 
 	ass.DirExists(dst)
 
@@ -692,5 +710,13 @@ func TestReadLines(t *testing.T) {
 
 	ass.Equal([]string{"test"}, data2)
 
+	data3, _ := ReadLines(path, 0)
+
+	ass.Empty(data3)
+
 	_ = DeleteDirs(dir)
+}
+
+func TestName(t *testing.T) {
+
 }

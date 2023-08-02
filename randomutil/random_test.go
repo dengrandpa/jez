@@ -19,6 +19,7 @@ func TestRandom(t *testing.T) {
 	ass.Len(res, 11)
 	ass.Panics(func() { Random(Numeral, 0) })
 	ass.Panics(func() { Random(Numeral, 11, true) })
+	ass.True(reg.MatchString(Random(Numeral, 5, true)))
 
 }
 

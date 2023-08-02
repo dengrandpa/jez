@@ -224,9 +224,7 @@ func RandomBytes(n int) []byte {
 
 	b := make([]byte, n)
 
-	if _, err := rand.Read(b); err != nil {
-		panic(err)
-	}
+	_, _ = rand.Read(b)
 
 	return b
 }
@@ -237,10 +235,7 @@ func RandomBytes(n int) []byte {
 //   - 这种方法生成的 UUID v4 可能不是完全符合标准，但在大多数情况下应该是足够的。
 func UUIDv4() string {
 	uuid := make([]byte, 16)
-	_, err := rand.Read(uuid)
-	if err != nil {
-		panic(err)
-	}
+	_, _ = rand.Read(uuid)
 
 	// 设置 version 为 4
 	uuid[6] = (uuid[6] & 0x0f) | 0x40
