@@ -30,12 +30,12 @@ go get github.com/dengrandpa/jez
 
 ### slice工具包
 ```go
-import "github.com/dengrandpa/sliceutil"
+import "github.com/dengrandpa/jez/sliceutil"
 ```
 
 ### map工具包
 ```go
-import "github.com/dengrandpa/maputil"
+import "github.com/dengrandpa/jez/maputil"
 ```
 
 …………

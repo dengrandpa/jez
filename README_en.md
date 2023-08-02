@@ -24,12 +24,12 @@ Import the corresponding package name when using it. For example:
 
 ### slice package
 ```go
-import "github.com/dengrandpa/sliceutil"
+import "github.com/dengrandpa/jez/sliceutil"
 ```
 
 ### map package
 ```go
-import "github.com/dengrandpa/maputil"
+import "github.com/dengrandpa/jez/maputil"
 ```
 
 ### …………
