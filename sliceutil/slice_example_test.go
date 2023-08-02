@@ -2,9 +2,7 @@ package sliceutil
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
-	"time"
 )
 
 func ExampleForEach() {
@@ -451,60 +449,6 @@ func ExampleFindUniqueDuplicates() {
 
 	// Output:
 	// [3 5]
-}
-
-func ExampleShuffle() {
-
-	rand.Seed(time.Now().UnixNano())
-
-	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-
-	list2 := Shuffle([]int{})
-
-	fmt.Println(len(list) == len(Shuffle(list)))
-	fmt.Println(list2)
-
-	// Output:
-	// true
-	// []
-}
-
-func ExampleSample() {
-
-	rand.Seed(time.Now().UnixNano())
-
-	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-	var list2 []string
-
-	fmt.Println(Contain(list, Sample(list)))
-
-	fmt.Println(Sample(list2) == "")
-
-	// Output:
-	// true
-	// true
-}
-
-func ExampleSamples() {
-
-	rand.Seed(time.Now().UnixNano())
-
-	list := []string{"1", "2", "3"}
-
-	s2 := Samples(list, 3)
-
-	fmt.Println(EqualElement(list, s2))
-
-	s3 := Samples(list, 2)
-
-	fmt.Println(ContainAll(list, s3...))
-
-	fmt.Println(Samples([]string{}, 3))
-
-	// Output:
-	// true
-	// true
-	// []
 }
 
 func ExampleMin() {

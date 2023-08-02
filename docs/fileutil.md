@@ -1,12 +1,18 @@
 # Fileutil
 
-fileutil 包提供了一些文件操作的工具函数，包括文件遍历、文件创建、文件删除等
+------
+
+提供了一些文件操作的工具函数，包括文件遍历、文件创建、文件删除等
+
+------
 
 ## 用法
 
 ```go
 import "github.com/dengrandpa/jez/fileutil"
 ```
+
+------
 
 ## 目录
 
@@ -42,7 +48,7 @@ import "github.com/dengrandpa/jez/fileutil"
 -   [ReadAll](#readAll)
 -   [ReadLines](#readLines)
 
-
+------
 
 ### FilterMap
 遍历当前目录，对每个文件调用 iteratee，如果返回 true，则将结果放入结果集中。
@@ -339,8 +345,19 @@ fmt.Println(DirExists(dir))
 ```
 
 ### DeleteWalkBy
-递归删除指定目录下的文件和子目录，iteratee: 用于处理每个文件（不包括目录）的逻辑，接收文件路径和 os.DirEntry 实例作为参数。
+递归删除指定目录下的文件和子目录
 
+- 参数：
+  - dirPath: 目录路径
+  - iteratee: 遍历函数，用于处理每个文件（不包括目录）的逻辑，接收文件路径和 os.DirEntry 实例作为参数
+  - withEmptyDir: 可选参数，指定是否删除空目录，默认为 false
+
+- 返回值：
+  - bool: 当前目录是否已被删除
+  - error: 错误
+
+- 注意事项：
+  - 如果要删除空目录，请注意 bool 返回值，错误的 bool 返回值可能导致文件意外删除或空目录删除失败。
 ```go
 isDelete, _ := fileutil.DeleteWalkBy(dir, func(path string, entry os.DirEntry) (bool, error) {
   return true, nil

@@ -244,3 +244,44 @@ func UUIDv4() string {
 
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:])
 }
+
+// Shuffle 打乱切片中元素的顺序。
+func Shuffle[T any](list []T) []T {
+	rand.Shuffle(len(list), func(i, j int) {
+		list[i], list[j] = list[j], list[i]
+	})
+
+	return list
+}
+
+// Sample 从切片中随机返回一个元素。
+func Sample[T any](list []T) T {
+	var zero T
+
+	if len(list) == 0 {
+		return zero
+	}
+
+	return list[rand.Intn(len(list))]
+}
+
+// Samples 从切片中随机返回n个元素，结果不去重。
+//
+// 注意事项：
+//   - 如果 n 大于切片的长度，则返回打乱顺序后的切片，如果 n 小于等于0，则返回空切片。
+func Samples[T any](list []T, n int) []T {
+	if n <= 0 {
+		return []T{}
+	}
+
+	newList := make([]T, len(list))
+	copy(newList, list)
+
+	newList = Shuffle(newList)
+
+	if n > len(newList) {
+		return newList
+	}
+
+	return newList[:n]
+}

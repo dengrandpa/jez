@@ -1,12 +1,18 @@
 # Fileutil
 
-Package fileutil provides some tool functions for file operations, including file traversal, file creation, file deletion, etc.
+------
+
+Provides some tool functions for file operations, including file traversal, file creation, file deletion, etc.
+
+------
 
 ## Usage
 
 ```go
 import "github.com/dengrandpa/jez/fileutil"
 ```
+
+------
 
 ## Index
 
@@ -42,7 +48,7 @@ import "github.com/dengrandpa/jez/fileutil"
 -   [ReadAll](#readAll)
 -   [ReadLines](#readLines)
 
-
+------
 
 ### FilterMap
 Traverse the current directory, calling iteratee on each file, and if it returns true, put the result in the result set.

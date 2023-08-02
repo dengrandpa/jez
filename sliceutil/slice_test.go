@@ -1,11 +1,8 @@
 package sliceutil
 
 import (
-	"math/rand"
-	"sort"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -460,51 +457,6 @@ func TestFindUniqueDuplicates(t *testing.T) {
 
 	ass.Equal([]int{3, 5}, FindUniqueDuplicates(list))
 
-}
-
-func TestShuffle(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	rand.Seed(time.Now().UnixNano())
-
-	list := Shuffle([]int{1, 2, 3, 3, 5, 3, 5, 6})
-	list2 := Shuffle([]int{})
-
-	ass.NotEqual(list, []int{1, 2, 3, 3, 5, 3, 5, 6})
-	ass.Equal(list2, []int{})
-}
-
-func TestSample(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	rand.Seed(time.Now().UnixNano())
-
-	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
-	list2 := []string{}
-
-	ass.Contains(list, Sample(list))
-	ass.Equal(Sample(list2), "")
-}
-
-func TestSamples(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-	rand.Seed(time.Now().UnixNano())
-
-	list := []string{"1", "2", "3"}
-
-	s2 := Samples(list, 3)
-	sort.Strings(s2)
-	ass.Equal(list, s2)
-
-	s3 := Samples(list, 2)
-	ass.True(ContainAll(list, s3...))
-
-	ass.Equal(Samples([]string{}, 3), []string{})
-
-	ass.Empty(Samples(list, 0))
 }
 
 func TestMin(t *testing.T) {

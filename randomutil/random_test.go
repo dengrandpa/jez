@@ -2,6 +2,7 @@ package randomutil
 
 import (
 	"regexp"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -240,4 +241,45 @@ func TestUUIDv4(t *testing.T) {
 
 	ass.True(reg.MatchString(uuid))
 	ass.Len(uuid, 36)
+}
+
+func TestShuffle(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	list := Shuffle([]int{1, 2, 3, 3, 5, 3, 5, 6})
+	list2 := Shuffle([]int{})
+
+	ass.NotEqual(list, []int{1, 2, 3, 3, 5, 3, 5, 6})
+	ass.Equal(list2, []int{})
+}
+
+func TestSample(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	list := []int{1, 2, 3, 3, 5, 3, 5, 6}
+	var list2 []string
+
+	ass.Contains(list, Sample(list))
+	ass.Equal(Sample(list2), "")
+}
+
+func TestSamples(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	list := []string{"1", "2", "3"}
+
+	s2 := Samples(list, 3)
+	sort.Strings(s2)
+	ass.Equal(list, s2)
+
+	s3 := Samples(list, 2)
+
+	ass.Subset(list, s3)
+
+	ass.Equal(Samples([]string{}, 3), []string{})
+
+	ass.Empty(Samples(list, 0))
 }

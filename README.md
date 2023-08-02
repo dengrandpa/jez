@@ -7,10 +7,16 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/dengrandpa/jez.svg)](https://pkg.go.dev/github.com/dengrandpa/jez)
 ![GitHub](https://img.shields.io/github/license/dengrandpa/jez)
 
+------
+
 
 ### 简体中文 | [English](./README_en.md) 
 
+------
+
 ### 特别感谢ChatGPT提供技术支持！！
+
+------
 
 ## 安装
 
@@ -32,39 +38,210 @@ import "github.com/dengrandpa/sliceutil"
 import "github.com/dengrandpa/maputil"
 ```
 
-### …………
+…………
 
-## 文档
-### 目录
--   [Fileutil](./docs/fileutil.md)
-    -   [FilterMap](./docs/fileutil.md#filterMap)
-    -   [FilterMapWalk](./docs/fileutil.md#filterMapWalk)
-    -   [IsDir](./docs/fileutil.md#isDir)
-    -   [IsEmptyDir](./docs/fileutil.md#isEmptyDir)
-    -   [FileExists](./docs/fileutil.md#fileExists)
-    -   [DirExists](./docs/fileutil.md#dirExists)
-    -   [OsCreate](./docs/fileutil.md#osCreate)
-    -   [CreateFiles](./docs/fileutil.md#createFiles)
-    -   [OverwriteFiles](./docs/fileutil.md#overwriteFiles)
-    -   [CreateDirs](./docs/fileutil.md#createDirs)
-    -   [CreateFilesWithDirs](./docs/fileutil.md#createFilesWithDirs)
-    -   [OverwriteFilesWithDirs](./docs/fileutil.md#overwriteFilesWithDirs)
-    -   [CreateFileWithData](./docs/fileutil.md#createFileWithData)
-    -   [CopyFile](./docs/fileutil.md#copyFile)
-    -   [FindFileWalk](./docs/fileutil.md#findFileWalk)
-    -   [FindFileWalkFilter](./docs/fileutil.md#findFileWalkFilter)
-    -   [Filenames](./docs/fileutil.md#filenames)
-    -   [FilenamesFilter](./docs/fileutil.md#filenamesFilter)
-    -   [FilenamesBy](./docs/fileutil.md#filenamesBy)
-    -   [FilenamesWalk](./docs/fileutil.md#filenamesWalk)
-    -   [FilenamesWalkFilter](./docs/fileutil.md#filenamesWalkFilter)
-    -   [FilenamesWalkBy](./docs/fileutil.md#filenamesWalkBy)
-    -   [DeleteFiles](./docs/fileutil.md#deleteFiles)
-    -   [DeleteDirs](./docs/fileutil.md#deleteDirs)
-    -   [DeleteEmptyDirWalk](./docs/fileutil.md#deleteEmptyDirWalk)
-    -   [DeleteWalkBy](./docs/fileutil.md#deleteWalkBy)
-    -   [Zip](./docs/fileutil.md#zip)
-    -   [ZipFilter](./docs/fileutil.md#zipFilter)
-    -   [Unzip](./docs/fileutil.md#unzip)
-    -   [ReadAll](./docs/fileutil.md#readAll)
-    -   [ReadLines](./docs/fileutil.md#readLines)
+------
+
+## 目录
+
+-   [Fileutil](#fileutil)：提供了一些文件操作的工具函数，包括文件遍历、文件创建、文件删除等
+-   [Maputil](#maputil)：提供了一些常用的 map 操作函数。
+-   [Randomutil](#randomutil)：提供了一些随机数生成的函数。
+-   [Sliceutil](#sliceutil)：提供了一些对切片的操作，包括遍历、映射、过滤、去重、求差集、求交集等。
+-   [Timeutil](#timeutil)：提供了时间相关的一些操作，包括时间格式化、时间计算、时间区间计算、时间转换等
+
+------
+
+## Fileutil
+提供了一些文件操作的工具函数，包括文件遍历、文件创建、文件删除等
+
+```go
+import "github.com/dengrandpa/jez/fileutil"
+```
+### 函数
+
+-   [FilterMap](./docs/fileutil.md#filterMap)：遍历当前目录，对每个文件调用 iteratee，如果返回 true，则将结果放入结果集中
+-   [FilterMapWalk](./docs/fileutil.md#filterMapWalk)：返回遍历所有目录、子目录，对每个文件调用 iteratee，如果返回 true，则将结果放入结果集中
+-   [IsDir](./docs/fileutil.md#isDir)：判断是否是目录
+-   [IsEmptyDir](./docs/fileutil.md#isEmptyDir)：判断目录是否为空
+-   [FileExists](./docs/fileutil.md#fileExists)：判断文件是否存在
+-   [DirExists](./docs/fileutil.md#dirExists)：判断目录是否存在
+-   [OsCreate](./docs/fileutil.md#osCreate)：等同于 os.Create,创建文件，如果文件已存在，则忽略，使用完毕后需要关闭
+-   [CreateFiles](./docs/fileutil.md#createFiles)：创建文件，如果文件已存在，则忽略
+-   [OverwriteFiles](./docs/fileutil.md#overwriteFiles)：创建文件，如果文件已存在，则覆盖
+-   [CreateDirs](./docs/fileutil.md#createDirs)：创建目录，包含子目录，如果目录已存在，则忽略
+-   [CreateFilesWithDirs](./docs/fileutil.md#createFilesWithDirs)：创建文件，如果文件已存在，则忽略，同时创建目录，包含子目录
+-   [OverwriteFilesWithDirs](./docs/fileutil.md#overwriteFilesWithDirs)：创建文件，如果文件已存在，则覆盖，同时创建目录，包含子目录
+-   [CreateFileWithData](./docs/fileutil.md#createFileWithData)：创建文件并写入字符串数据
+-   [CopyFile](./docs/fileutil.md#copyFile)：拷贝文件
+-   [FindFileWalk](./docs/fileutil.md#findFileWalk)：遍历目录、子目录，查找文件
+-   [FindFileWalkFilter](./docs/fileutil.md#findFileWalkFilter)：遍历目录、子目录，查找文件，对每个文件调用 iteratee 函数，如果返回 true，则表示找到了
+-   [Filenames](./docs/fileutil.md#filenames)：返回目录下的文件名切片
+-   [FilenamesFilter](./docs/fileutil.md#filenamesFilter)：遍历目录下的文件，对每个文件调用 iteratee 函数，如果返回 true，则将文件名添加到切片中
+-   [FilenamesBy](./docs/fileutil.md#filenamesBy)：遍历目录下的文件，对每个文件调用 iteratee 函数，将返回的字符串添加到切片中
+-   [FilenamesWalk](./docs/fileutil.md#filenamesWalk)：返回目录下的文件名切片，包含子目录
+-   [FilenamesWalkFilter](./docs/fileutil.md#filenamesWalkFilter)：返回目录下的文件，包含子目录，对每个文件调用 iteratee 函数，如果返回 true，则将文件名添加到切片中
+-   [FilenamesWalkBy](./docs/fileutil.md#filenamesWalkBy)：返回目录下的文件，包含子目录，对每个文件调用 iteratee 函数，将返回的字符串添加到切片中
+-   [DeleteFiles](./docs/fileutil.md#deleteFiles)：删除文件
+-   [DeleteDirs](./docs/fileutil.md#deleteDirs)：删除目录
+-   [DeleteEmptyDirWalk](./docs/fileutil.md#deleteEmptyDirWalk)：返回删除空目录，包含子目录
+-   [DeleteWalkBy](./docs/fileutil.md#deleteWalkBy)：递归删除指定目录下的文件和子目录
+-   [Zip](./docs/fileutil.md#zip)：将目录或文件压缩为 zip 文件，如果zip已存在，则会被覆盖。
+-   [ZipFilter](./docs/fileutil.md#zipFilter)：对每个文件或目录调用 iteratee 函数，如果返回 true，则将其压缩到 zip 文件中，如果zip文件已存在，则会被覆盖。
+-   [Unzip](./docs/fileutil.md#unzip)：解压 zip 文件到指定目录，如果目录不存在，则会被创建。
+-   [ReadAll](./docs/fileutil.md#readAll)：将文件的所有内容读取为字符串。
+-   [ReadLines](./docs/fileutil.md#readLines)：读取文件的前 n 行，如果 n < 0，则读取所有行。
+
+------
+
+## Maputil
+提供了一些常用的 map 操作函数。
+
+```go
+import "github.com/dengrandpa/jez/maputil"
+```
+### 函数
+
+-   [ForEach](./docs/maputil.md#forEach)：遍历map，对每个元素调用 iteratee 函数。
+-   [Filter](./docs/maputil.md#filter)：遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回 true，则将该元素添加到结果map中。
+-   [Keys](./docs/maputil.md#keys)：遍历map，将每个key添加到结果slice中。
+-   [KeysBy](./docs/maputil.md#keysBy)：遍历map，对每个元素调用 iteratee 函数，并返回调用后结果。
+-   [Values](./docs/maputil.md#values)：返回map中所有的value。
+-   [ValuesBy](./docs/maputil.md#valuesBy)：遍历map，对每个元素调用 iteratee 函数，并返回调用后结果。
+-   [ValuesUnique](./docs/maputil.md#valuesUnique)：返回map中所有的value，结果去重。
+-   [KeysAndValues](./docs/maputil.md#keysAndValues)：返回map中所有的key和value。
+-   [KeysAndValuesFilter](./docs/maputil.md#keysAndValuesFilter)：遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回true，则将该元素添加到结果slice中。
+-   [Deletes](./docs/maputil.md#deletes)：通过key删除多个元素。
+-   [DeleteByValues](./docs/maputil.md#deleteByValues)：通过value删除多个元素。
+-   [DeleteFilter](./docs/maputil.md#deleteFilter)：遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回true，则删除该元素。
+-   [ReplaceValue](./docs/maputil.md#replaceValue)：替换所有value等于 old 的元素。
+-   [MapToSliceBy](./docs/maputil.md#mapToSliceBy)：map转切片，遍历map，对每个元素调用 iteratee 函数，并返回调用后结果切片。
+-   [MapToSliceFilter](./docs/maputil.md#mapToSliceFilter)：map转切片，遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回true，则将该元素添加到结果切片中。
+
+------
+
+## Randomutil
+提供了一些随机数生成的函数。
+
+```go
+import "github.com/dengrandpa/jez/randomutil"
+```
+### 函数
+
+-   [Random](./docs/randomutil.md#random)：随机生成字符串
+-   [RandomLower](./docs/randomutil.md#randomLower)：随机生成小写字母字符串
+-   [RandomUpper](./docs/randomutil.md#randomUpper)：随机生成大写字母字符串
+-   [RandomNumeral](./docs/randomutil.md#randomNumeral)：随机生成数字字符串
+-   [RandomCaseLetters](./docs/randomutil.md#randomCaseLetters)：随机生成大小写字母字符串。
+-   [RandomLowerNumeral](./docs/randomutil.md#randomLowerNumeral)：随机生成小写字母和数字字符串
+-   [RandomUpperNumeral](./docs/randomutil.md#randomUpperNumeral)：随机生成大写字母和数字字符串
+-   [RandomCharset](./docs/randomutil.md#randomCharset)：随机生成字符串，包含数字、大小写字母
+-   [RandomInt](./docs/randomutil.md#randomInt)：随机生成整数，包含 min，不包含 max，即 [min,max)。
+-   [RandomIntSlice](./docs/randomutil.md#randomIntSlice)：随机生成整数切片
+-   [RandomIntSliceUnique](./docs/randomutil.md#randomIntSliceUnique)：随机生成不重复的整数切片
+-   [RandomBytes](./docs/randomutil.md#randomBytes)：随机生成字节切片
+-   [UUIDv4](./docs/randomutil.md#uUIDv4)：根据 RFC4122 生成 UUID v4版本
+-   [Shuffle](./docs/randomutil.md#shuffle)：打乱切片中元素的顺序。
+-   [Sample](./docs/randomutil.md#sample)：从切片中随机返回一个元素。
+-   [Samples](./docs/randomutil.md#samples)：从切片中随机返回n个元素，结果不去重。
+
+------
+
+## Sliceutil
+提供了一些对切片的操作，包括遍历、映射、过滤、去重、求差集、求交集等。
+
+```go
+import "github.com/dengrandpa/jez/sliceutil"
+```
+### 函数
+
+-   [ForEach](./docs/sliceutil.md#forEach)：遍历切片并为每个元素调用 iteratee 函数。
+-   [ForEachWithBreak](./docs/sliceutil.md#forEachWithBreak)：遍历切片并为每个元素调用 iteratee 函数，如果返回 false，则停止遍历。
+-   [Filter](./docs/sliceutil.md#filter)：遍历切片并为每个元素调用 iteratee 函数，只返回调用结果为true的元素。
+-   [Map](./docs/sliceutil.md#map)：遍历切片并为每个元素调用 iteratee 函数，并返回调用后结果。
+-   [Contain](./docs/sliceutil.md#contain)：效验切片是否包含目标元素。
+-   [ContainAll](./docs/sliceutil.md#containAll)：效验切片是否包含所有的目标元素。
+-   [FilterMap](./docs/sliceutil.md#filterMap)：遍历切片并为每个元素调用 iteratee 函数，如果调用结果为true，则返回调用后元素。
+-   [AppendIfNotDuplicate](./docs/sliceutil.md#appendIfNotDuplicate)：添加元素到切片，如果元素已经存在，则不添加。
+-   [AppendMultipleIfNotDuplicate](./docs/sliceutil.md#appendMultipleIfNotDuplicate)：添加多个元素到切片，如果元素已经存在，则不添加。
+-   [Remove](./docs/sliceutil.md#remove)：从切片中删除元素。
+-   [RemoveFilter](./docs/sliceutil.md#removeFilter)：遍历切片并为每个元素调用 iteratee 函数，如果调用结果为true，则删除该元素。
+-   [Unique](./docs/sliceutil.md#unique)：去重。
+-   [UniqueBy](./docs/sliceutil.md#uniqueBy)：遍历切片并为每个元素调用 iteratee 函数，返回唯一的元素。
+-   [UniqueNonzero](./docs/sliceutil.md#uniqueNonzero)：删除重复元素及零值。
+-   [UniqueNonzeroBy](./docs/sliceutil.md#uniqueNonzeroBy)：遍历切片并为每个元素调用 iteratee 函数，返回唯一的、非零值的元素。
+-   [Nonzero](./docs/sliceutil.md#nonzero)：删除零值。
+-   [Replace](./docs/sliceutil.md#replace)：将切片中的元素 old 替换为 new ，最多替换 n 次，如果 n 为-1，则替换所有的 old 元素。
+-   [ReplaceAll](./docs/sliceutil.md#replaceAll)：将切片中的元素 old 替换为 new ，替换所有的 old 元素。
+-   [Difference](./docs/sliceutil.md#difference)：差集，结果不去重。
+-   [DifferenceUnique](./docs/sliceutil.md#differenceUnique)：差集，结果去重。
+-   [Intersection](./docs/sliceutil.md#intersection)：交集，结果元素唯一。
+-   [MutualDifference](./docs/sliceutil.md#mutualDifference)：差异，结果不去重。
+-   [ToMapBy](./docs/sliceutil.md#toMapBy)：遍历切片，将切片中的元素转换为map的key和value。
+-   [Repeat](./docs/sliceutil.md#repeat)：返回包含 n 个 item 的切片。
+-   [Equal](./docs/sliceutil.md#equal)：长度、顺序、值都相等时返回 true 。
+-   [EqualElement](./docs/sliceutil.md#equalElement)：长度、值相等时返回 true ，不考虑顺序。
+-   [FindIndex](./docs/sliceutil.md#findIndex)：返回第一个匹配的元素的索引，不存在则返回 -1 。
+-   [FindIndexFilter](./docs/sliceutil.md#findIndexFilter)：返回调用 iteratee 函数返回 true 的第一个元素的索引，不存在则返回 -1 。
+-   [FindDuplicates](./docs/sliceutil.md#findDuplicates)：返回切片中所有重复的元素，结果不去重。
+-   [FindUniqueDuplicates](./docs/sliceutil.md#findUniqueDuplicates)：返回切片中所有重复的元素，结果去重。
+-   [Min](./docs/sliceutil.md#min)：返回最小值
+-   [Max](./docs/sliceutil.md#max)：返回最大值
+-   [Drop](./docs/sliceutil.md#drop)：返回从开头删除n个元素的切片，如果 n 大于切片的长度，则返回空切片。
+-   [DropLast](./docs/sliceutil.md#dropLast)：返回从末尾删除n个元素的切片，如果 n 大于切片的长度，则返回空切片。
+-   [Slice](./docs/sliceutil.md#slice)：返回索引从 n 到 m 的切片，但不包括 m，等同于 slice[n:m]，即[min,max)，但不会在溢出时panic。
+-   [IsSorted](./docs/sliceutil.md#isSorted)：判断切片是否已排序。
+-   [IsSortedBy](./docs/sliceutil.md#isSortedBy)：遍历切片并为每个元素调用 iteratee 函数，以确定它是否已排序。
+-   [Reverse](./docs/sliceutil.md#reverse)：将切片中的元素顺序反转。
+-   [Flatten](./docs/sliceutil.md#flatten)：将二维切片转换为一维切片。
+-   [InsertAt](./docs/sliceutil.md#insertAt)：在切片的指定索引处插入值，如果索引大于切片的长度或小于 0，则将值附加到切片的末尾。
+
+------
+
+## Timeutil
+提供了时间相关的一些操作，包括时间格式化、时间计算、时间区间计算、时间转换等
+
+```go
+import "github.com/dengrandpa/jez/timeutil"
+```
+### 函数
+
+-   [ParseTime](./docs/timeutil.md#parseTime)：将字符串转换为时间，默认格式为 YYYYMMDDHHMMSS
+-   [ParseTimestamp](./docs/timeutil.md#parseTimestamp)：将时间戳转换为时间
+-   [StartOfMinute](./docs/timeutil.md#startOfMinute)：返回时间 t 所在分钟的开始时间 yyyy-mm-dd hh:mm:00
+-   [EndOfMinute](./docs/timeutil.md#endOfMinute)：返回时间 t 所在分钟的结束时间 yyyy-mm-dd hh:mm:59
+-   [StartOfHour](./docs/timeutil.md#startOfHour)：返回时间 t 所在小时的开始时间 yyyy-mm-dd hh:00:00
+-   [EndOfHour](./docs/timeutil.md#endOfHour)：返回时间 t 所在小时的结束时间 yyyy-mm-dd hh:59:59
+-   [StartOfDay](./docs/timeutil.md#startOfDay)：返回时间 t 所在天的开始时间 yyyy-mm-dd 00:00:00
+-   [EndOfDay](./docs/timeutil.md#endOfDay)：返回时间 t 所在天的结束时间 yyyy-mm-dd 23:59:59
+-   [StartOfWeekMonday](./docs/timeutil.md#startOfWeekMonday)：返回时间 t 所在周的开始时间，周一为第一天 yyyy-mm-dd 00:00:00
+-   [EndOfWeekSunday](./docs/timeutil.md#endOfWeekSunday)：返回时间 t 所在周的结束时间，周日为最后一天 yyyy-mm-dd 23:59:59
+-   [StartOfWeekSunday](./docs/timeutil.md#startOfWeekSunday)：返回时间 t 所在周的开始时间，周日为第一天 yyyy-mm-dd 00:00:00
+-   [EndOfWeekMonday](./docs/timeutil.md#endOfWeekMonday)：返回时间 t 所在周的结束时间，周一为最后一天 yyyy-mm-dd 23:59:59
+-   [StartOfMonth](./docs/timeutil.md#startOfMonth)：返回时间 t 所在月的开始时间 yyyy-mm-01 00:00:00
+-   [EndOfMonth](./docs/timeutil.md#endOfMonth)：返回时间 t 所在月的结束时间 yyyy-mm-dd 23:59:59
+-   [StartOfYear](./docs/timeutil.md#startOfYear)：返回时间 t 所在年的开始时间 yyyy-01-01 00:00:00
+-   [EndOfYear](./docs/timeutil.md#endOfYear)：返回时间 t 所在年的结束时间 yyyy-12-31 23:59:59
+-   [AddSecond](./docs/timeutil.md#addSecond)：添加或删除秒数
+-   [AddMinute](./docs/timeutil.md#addMinute)：添加或删除分钟数
+-   [AddHour](./docs/timeutil.md#addHour)：添加或删除小时数
+-   [AddDay](./docs/timeutil.md#addDay)：添加或删除天数
+-   [AddWeek](./docs/timeutil.md#addWeek)：添加或删除周数
+-   [AddMonth](./docs/timeutil.md#addMonth)：添加或删除月数
+-   [AddYear](./docs/timeutil.md#addYear)：添加或删除年数
+-   [FormatTime](./docs/timeutil.md#formatTime)：将时间格式化为字符串，默认格式为 yyyy-mm-dd hh:mm:ss
+-   [FormatTimestamp](./docs/timeutil.md#formatTimestamp)：将时间戳格式化为字符串，默认格式为 yyyy-mm-dd hh:mm:ss
+-   [FormatNow](./docs/timeutil.md#formatNow)：返回当前时间的字符串格式，默认格式为 yyyy-mm-dd hh:mm:ss
+-   [IsLeapYear](./docs/timeutil.md#isLeapYear)：判断年份 year 是否为闰年
+-   [RangeHours](./docs/timeutil.md#rangeHours)：返回两个时间之间的所有小时的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
+-   [RangeDays](./docs/timeutil.md#rangeDays)：返回两个时间之间的所有天的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
+-   [RangeMonths](./docs/timeutil.md#rangeMonths)：返回两个时间之间的所有月的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
+-   [RangeYears](./docs/timeutil.md#rangeYears)：返回两个时间之间的所有年的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
+-   [NewTime](./docs/timeutil.md#newTime)：相当于 time.Date，如果不传参数则相当于 time.Now。
+-   [SubTime](./docs/timeutil.md#subTime)：返回 t1 和 t2 之间的差值的日、小时、分钟和秒
+-   [SubTimestamp](./docs/timeutil.md#subTimestamp)：返回 t1 和 t2 之间的差值的日、小时、分钟和秒
+-   [CST](./docs/timeutil.md#cST)：返回中国时区
+-   [ToCST](./docs/timeutil.md#toCST)：将时间转换为中国时区
+
+------
+
