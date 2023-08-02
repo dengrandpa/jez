@@ -153,6 +153,27 @@ func TestDirExists(t *testing.T) {
 	_ = DeleteDirs(dir)
 }
 
+func TestOsCreate(t *testing.T) {
+	t.Parallel()
+	ass := assert.New(t)
+
+	dir := "./testdata/TestCreateFileWithOS/"
+
+	path := dir + "test-file.txt"
+
+	_ = CreateDirs(dir)
+
+	file, err := OsCreate(path)
+
+	ass.Nil(err)
+	ass.FileExists(path)
+
+	file.Close()
+
+	_ = DeleteDirs(dir)
+
+}
+
 func TestCreateFiles(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
@@ -277,27 +298,6 @@ func TestOverwriteFilesWithDirs(t *testing.T) {
 	}
 
 	_ = DeleteDirs(dir)
-}
-
-func TestOsCreate(t *testing.T) {
-	t.Parallel()
-	ass := assert.New(t)
-
-	dir := "./testdata/TestCreateFileWithOS/"
-
-	path := dir + "test-file.txt"
-
-	_ = CreateDirs(dir)
-
-	file, err := OsCreate(path)
-
-	ass.Nil(err)
-	ass.FileExists(path)
-
-	file.Close()
-
-	_ = DeleteDirs(dir)
-
 }
 
 func TestCopyFile(t *testing.T) {
@@ -675,7 +675,7 @@ func TestReadAll(t *testing.T) {
 	_ = DeleteDirs(dir)
 }
 
-func TestReadLine(t *testing.T) {
+func TestReadLines(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
@@ -688,7 +688,7 @@ func TestReadLine(t *testing.T) {
 	_ = CreateDirs(dir)
 	_ = CreateFileWithData(path, data)
 
-	data2, _ := ReadLine(path, 1)
+	data2, _ := ReadLines(path, 1)
 
 	ass.Equal([]string{"test"}, data2)
 

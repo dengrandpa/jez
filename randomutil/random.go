@@ -126,6 +126,9 @@ func RandomCharset(n int, unique ...bool) string {
 }
 
 // RandomInt 随机生成整数，包含 min，不包含 max，即 [min,max)
+//
+// 注意事项：
+//   - 当 min > max 时，会交换 min 和 max 的值
 func RandomInt(min, max int) int {
 	if min == max {
 		return min
@@ -141,19 +144,18 @@ func RandomInt(min, max int) int {
 // RandomIntSlice 随机生成整数切片
 //
 // 注意事项：
+//   - 当 min > max 时，会交换 min 和 max 的值
 //   - 当 n < 1 时，会 panic
 func RandomIntSlice(min, max, n int) []int {
 	if n < 1 {
 		panic("n must be greater than 0")
 	}
 
-	if max < min {
-		min, max = max, min
-	}
-
 	s := make([]int, n)
 
-	if max == min {
+	sub := max - min
+
+	if sub == 0 {
 		for i := range s {
 			s[i] = min
 		}
@@ -161,8 +163,13 @@ func RandomIntSlice(min, max, n int) []int {
 		return s
 	}
 
+	if sub < 0 {
+		min = max
+		sub = -sub
+	}
+
 	for i := range s {
-		s[i] = rand.Intn(max-min) + min
+		s[i] = rand.Intn(sub) + min
 	}
 
 	return s

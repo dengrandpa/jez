@@ -603,8 +603,8 @@ func ReadAll(filePath string) (string, error) {
 	return string(b), nil
 }
 
-// ReadLine 读取文件的前 n 行，如果 n < 0，则读取所有行。
-func ReadLine(filePath string, n int) ([]string, error) {
+// ReadLines 读取文件的前 n 行，如果 n < 0，则读取所有行。
+func ReadLines(filePath string, n int) ([]string, error) {
 	if n == 0 {
 		return []string{}, nil
 	}

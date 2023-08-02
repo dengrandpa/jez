@@ -22,6 +22,12 @@ func TestParallelForEach(t *testing.T) {
 	})
 
 	ass.Equal(int32(15), i.Load())
+
+	ParallelForEach([]int32{}, func(index int, item int32) {
+		i.Add(item)
+	})
+	ass.Equal(int32(15), i.Load())
+
 }
 
 func TestConcurrentForEach(t *testing.T) {
@@ -52,6 +58,10 @@ func TestParallelMap(t *testing.T) {
 	})
 
 	ass.Equal([]string{"1", "2", "3", "4", "5"}, result)
+
+	ass.Empty(ParallelMap([]int{}, func(index int, item int) string {
+		return strconv.Itoa(item)
+	}))
 }
 
 func TestConcurrentMap(t *testing.T) {
@@ -68,4 +78,7 @@ func TestConcurrentMap(t *testing.T) {
 
 	ass.Equal([]string{"1", "2", "3", "4", "5"}, result)
 
+	ass.Empty(ConcurrentMap([]int{}, func(index int, item int) string {
+		return strconv.Itoa(item)
+	}))
 }

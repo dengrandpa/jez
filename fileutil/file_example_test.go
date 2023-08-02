@@ -122,6 +122,26 @@ func ExampleDirExists() {
 	_ = DeleteDirs(dir)
 }
 
+func ExampleOsCreate() {
+
+	dir := "./testdata/TestCreateFileWithOS/"
+
+	path := dir + "test-file.txt"
+
+	_ = CreateDirs(dir)
+
+	file, _ := OsCreate(path)
+	_ = file.Close()
+
+	fmt.Println(FileExists(path))
+
+	// Output:
+	// true <nil>
+
+	_ = DeleteDirs(dir)
+
+}
+
 func ExampleCreateFiles() {
 
 	dir := "./testdata/TestCreateFiles/"
@@ -257,26 +277,6 @@ func ExampleOverwriteFilesWithDirs() {
 	// true <nil>
 
 	_ = DeleteDirs(dir)
-}
-
-func ExampleOsCreate() {
-
-	dir := "./testdata/TestCreateFileWithOS/"
-
-	path := dir + "test-file.txt"
-
-	_ = CreateDirs(dir)
-
-	file, _ := OsCreate(path)
-	file.Close()
-
-	fmt.Println(FileExists(path))
-
-	// Output:
-	// true <nil>
-
-	_ = DeleteDirs(dir)
-
 }
 
 func ExampleCopyFile() {
@@ -682,7 +682,7 @@ func ExampleReadAll() {
 	_ = DeleteDirs(dir)
 }
 
-func ExampleReadLine() {
+func ExampleReadLines() {
 
 	dir := "./testdata/TestReadLine/"
 
@@ -693,7 +693,7 @@ func ExampleReadLine() {
 	_ = CreateDirs(dir)
 	_ = CreateFileWithData(path, data)
 
-	data2, _ := ReadLine(path, 1)
+	data2, _ := ReadLines(path, 1)
 
 	fmt.Println(data2)
 

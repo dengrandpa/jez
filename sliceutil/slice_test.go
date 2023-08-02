@@ -100,6 +100,8 @@ func TestContainAll(t *testing.T) {
 	ass.Equal(true, ContainAll(list, "1", "2", "2"))
 	ass.Equal(true, ContainAll(list, "1", "2"))
 	ass.Equal(false, ContainAll(list, "1", "4"))
+	ass.True(ContainAll(list))
+	ass.False(ContainAll([]string{}, "1"))
 }
 
 func TestFilterMap(t *testing.T) {
@@ -138,6 +140,7 @@ func TestAppendMultipleIfNotDuplicate(t *testing.T) {
 	ass.Equal(list, AppendMultipleIfNotDuplicate(list, "1"))
 	ass.Equal([]string{"1", "2", "3", "4"}, AppendMultipleIfNotDuplicate(list, "3", "4"))
 	ass.Equal([]string{"1", "2", "3", "4", "5"}, AppendMultipleIfNotDuplicate(list, "4", "5"))
+	ass.Equal(list, AppendMultipleIfNotDuplicate(list))
 
 }
 
@@ -149,6 +152,8 @@ func TestRemove(t *testing.T) {
 
 	ass.Equal([]string{"2", "3"}, Remove(list, "1"))
 	ass.Equal([]string{"3"}, Remove(list, "1", "2"))
+	ass.Equal(list, Remove(list))
+	ass.Empty(Remove([]string{}, "1"))
 
 }
 
@@ -164,6 +169,10 @@ func TestRemoveFilter(t *testing.T) {
 		}
 
 		return false
+	}))
+
+	ass.Empty(RemoveFilter([]string{}, func(index int, item string) bool {
+		return true
 	}))
 }
 
@@ -235,6 +244,9 @@ func TestReplace(t *testing.T) {
 
 	ass.Equal([]int{0, 1, 1, 6, 6, 6, 3, 0}, Replace(list, 2, 6, -1))
 
+	ass.Empty(Replace([]string{}, "1", "2", -1))
+	ass.Equal(list, Replace(list, 1, 2, 0))
+
 }
 
 func TestReplaceAll(t *testing.T) {
@@ -255,6 +267,9 @@ func TestDifference(t *testing.T) {
 	list2 := []int{0, 1, 1, 2, 2, 2, 6, 6}
 
 	ass.Equal([]int{3, 3, 6, 6}, Difference(list1, list2))
+
+	ass.Equal(list1, Difference(list1, []int{}))
+	ass.Equal(list1, Difference([]int{}, list1))
 }
 
 func TestDifferenceUnique(t *testing.T) {
@@ -265,7 +280,12 @@ func TestDifferenceUnique(t *testing.T) {
 
 	list2 := []int{0, 1, 1, 2, 2, 2, 6, 6}
 
+	list3 := []int{0, 1, 2}
+
 	ass.Equal([]int{3, 6}, DifferenceUnique(list1, list2))
+
+	ass.Equal(list3, DifferenceUnique(list3, []int{}))
+	ass.Equal(list3, DifferenceUnique([]int{}, list3))
 }
 
 func TestIntersection(t *testing.T) {
@@ -282,6 +302,9 @@ func TestIntersection(t *testing.T) {
 	list4 := []int{2, 3, 4, 5, 6}
 
 	ass.Equal([]int{2, 3}, Intersection(list3, list4))
+
+	ass.Empty(Intersection(list1, []int{}))
+	ass.Empty(Intersection([]int{}, list1))
 }
 
 func TestMutualDifference(t *testing.T) {
@@ -346,6 +369,7 @@ func TestRepeat(t *testing.T) {
 
 	ass.Equal([]int{1, 1, 1, 1, 1}, Repeat(1, 5))
 	ass.Equal([]string{"1", "1", "1", "1", "1"}, Repeat("1", 5))
+	ass.Empty(Repeat(1, 0))
 }
 
 func TestEqual(t *testing.T) {
@@ -371,11 +395,13 @@ func TestEqualElement(t *testing.T) {
 	list3 := []int{3, 2, 3, 3, 1}
 	list4 := []int{1, 2}
 	list5 := []int{3, 2, 1}
+	list6 := []int{3, 1, 1}
 
-	ass.Equal(true, EqualElement(list1, list2))
-	ass.Equal(true, EqualElement(list1, list3))
-	ass.Equal(false, EqualElement(list1, list4))
-	ass.Equal(false, EqualElement(list1, list5))
+	ass.True(EqualElement(list1, list2))
+	ass.True(EqualElement(list1, list3))
+	ass.False(EqualElement(list1, list4))
+	ass.False(EqualElement(list1, list5))
+	ass.False(EqualElement(list5, list6))
 }
 
 func TestFindIndex(t *testing.T) {
@@ -410,6 +436,10 @@ func TestFindIndexFilter(t *testing.T) {
 
 	ass.Equal(3, FindIndexFilter(list, func(index int, item int) bool {
 		return item > 3
+	}))
+
+	ass.Equal(-1, FindIndexFilter(list, func(index int, item int) bool {
+		return item > 10
 	}))
 }
 
@@ -473,6 +503,8 @@ func TestSamples(t *testing.T) {
 	ass.True(ContainAll(list, s3...))
 
 	ass.Equal(Samples([]string{}, 3), []string{})
+
+	ass.Empty(Samples(list, 0))
 }
 
 func TestMin(t *testing.T) {
@@ -484,6 +516,8 @@ func TestMin(t *testing.T) {
 
 	list2 := []int{5, 2, 111, 3}
 	ass.Equal(2, Min(list2))
+
+	ass.Equal(0, Min([]int{}))
 }
 
 func TestMax(t *testing.T) {
@@ -495,6 +529,8 @@ func TestMax(t *testing.T) {
 
 	list2 := []int{5, 2, 111, 3}
 	ass.Equal(111, Max(list2))
+
+	ass.Equal(0, Max([]int{}))
 }
 
 func TestDrop(t *testing.T) {
@@ -505,6 +541,7 @@ func TestDrop(t *testing.T) {
 
 	ass.Equal([]string{"3", "4"}, Drop(s, 2))
 	ass.Equal([]string{}, Drop(s, 1111))
+	ass.Equal(s, Drop(s, 0))
 }
 
 func TestDropLast(t *testing.T) {
@@ -515,6 +552,8 @@ func TestDropLast(t *testing.T) {
 
 	ass.Equal([]string{"1", "2"}, DropLast(s, 2))
 	ass.Equal([]string{}, DropLast(s, 1111))
+
+	ass.Equal(s, DropLast(s, 0))
 }
 
 func TestSlice(t *testing.T) {
@@ -591,4 +630,7 @@ func TestInsertAt(t *testing.T) {
 
 	ass.Equal([]int{1, 2, 666, 777, 888, 3, 4, 5}, list1)
 
+	ass.Equal(list, InsertAt(list, 0))
+	ass.Equal([]int{1, 2, 3, 4, 5, 6}, InsertAt(list, -1, 6))
+	ass.Equal([]int{1, 2, 3, 4, 5, 6}, InsertAt(list, 10, 6))
 }
