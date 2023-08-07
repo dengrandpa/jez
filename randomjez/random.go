@@ -1,3 +1,4 @@
+// Package randomjez 随机数生成相关函数
 package randomjez
 
 import (

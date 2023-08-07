@@ -1,4 +1,4 @@
-// Package timeutil 时间相关函数
+// Package timejez 时间相关函数
 package timejez
 
 import (

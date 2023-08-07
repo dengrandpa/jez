@@ -52,7 +52,7 @@ import "github.com/dengrandpa/jez/mapjez"
 
 ------
 
-## Filejez
+## [Filejez](./docs/filejez.md#Filejez)
 提供了一些文件操作的工具函数，包括文件遍历、文件创建、文件删除等
 
 ```go
@@ -94,7 +94,7 @@ import "github.com/dengrandpa/jez/filejez"
 
 ------
 
-## Mapjez
+## [Mapjez](./docs/mapjez.md#Mapjez)
 提供了一些常用的 map 操作函数。
 
 ```go
@@ -120,7 +120,7 @@ import "github.com/dengrandpa/jez/mapjez"
 
 ------
 
-## Randomjez
+## [Randomjez](./docs/randomjez.md#Randomjez)
 提供了一些随机数生成的函数。
 
 ```go
@@ -147,7 +147,7 @@ import "github.com/dengrandpa/jez/randomjez"
 
 ------
 
-## Slicejez
+## [Slicejez](./docs/slicejez.md#Slicejez)
 提供了一些对切片的操作，包括遍历、映射、过滤、去重、求差集、求交集等。
 
 ```go
@@ -198,7 +198,7 @@ import "github.com/dengrandpa/jez/slicejez"
 
 ------
 
-## Timejez
+## [Timejez](./docs/timejez.md#Timejez)
 提供了时间相关的一些操作，包括时间格式化、时间计算、时间区间计算、时间转换等
 
 ```go

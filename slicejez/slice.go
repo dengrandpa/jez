@@ -1,4 +1,4 @@
-// Package sliceutil slice相关函数
+// Package slicejez slice相关函数
 package slicejez
 
 import (

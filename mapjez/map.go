@@ -1,4 +1,4 @@
-// Package maputil map相关函数
+// Package mapjez map相关函数
 package mapjez
 
 // ForEach 遍历map，对每个元素调用 iteratee 函数。
