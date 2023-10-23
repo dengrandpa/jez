@@ -366,9 +366,136 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/dengrandpa/jez/mapjez"
+)
+
+func main() {
+	m := map[string]int{
+		"a": 1,
+		"b": 2,
+		"c": 3,
+		"d": 4,
+		"e": 5,
+		"f": 1,
+	}
+	mapjez.Deletes(m, "a", "b")
+
+	fmt.Println(m)
+
+	// Output:
+	// map[c:3 d:4 e:5 f:1]
+}
+
+```
+
+### DeleteByValues
+Delete multiple elements by value.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/dengrandpa/jez/mapjez"
+)
+
+func main() {
+	m := map[string]int{
+		"a": 1,
+		"b": 2,
+		"c": 3,
+		"d": 4,
+		"e": 5,
+		"f": 1,
+	}
+	mapjez.DeleteByValues(m, 1, 2)
+
+	fmt.Println(m)
+
+	// Output:
+	// map[c:3 d:4 e:5]
+}
+
+```
+
+### DeleteFilter
+Traverse the map, call the iteratee function for each element, and delete the element if iteratee returns true.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/dengrandpa/jez/mapjez"
+)
+
+func main() {
+	m := map[string]int{
+		"a": 1,
+		"b": 2,
+		"c": 3,
+		"d": 4,
+		"e": 5,
+		"f": 1,
+	}
+	mapjez.DeleteFilter(m, func(key string, value int) bool {
+		return value%2 == 0
+	})
+
+	fmt.Println(m)
+
+	// Output:
+	// map[a:1 c:3 e:5 f:1]
+}
+
+```
+
+### ReplaceValue
+Replace all elements whose value is equal to old.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/dengrandpa/jez/mapjez"
+)
+
+func main() {
+	m := map[string]int{
+		"a": 1,
+		"b": 2,
+		"c": 3,
+		"d": 4,
+		"e": 5,
+		"f": 1,
+		"g": 1,
+	}
+	mapjez.ReplaceValue(m, 1, 222)
+
+	fmt.Println(m)
+
+	// Output:
+	// map[a:222 b:2 c:3 d:4 e:5 f:222 g:222]
+}
+
+```
+
+### MapToSliceBy
+The map is sliced, the map is traversed, the iteratee function is called for each element, and the result slice is returned after the call.
+
+```go
+package main
+
+import (
+	"fmt"
 	"sort"
 	"strconv"
-	
+
 	"github.com/dengrandpa/jez/mapjez"
 )
 
@@ -395,8 +522,8 @@ func main() {
 
 ```
 
-### DeleteByValues
-Delete multiple elements by value.
+### MapToSliceFilter
+The map is sliced, the map is traversed, and the iteratee function is called on each element. If iteratee returns true, the element is added to the result slice.
 
 ```go
 package main
@@ -405,7 +532,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
-	
+
 	"github.com/dengrandpa/jez/mapjez"
 )
 
@@ -428,133 +555,6 @@ func main() {
 
 	// Output:
 	// [b 2 d 4]
-}
-
-```
-
-### DeleteFilter
-Traverse the map, call the iteratee function for each element, and delete the element if iteratee returns true.
-
-```go
-package main
-
-import (
-	"fmt"
-	
-	"github.com/dengrandpa/jez/mapjez"
-)
-
-func main() {
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-	}
-	mapjez.Deletes(m, "a", "b")
-
-	fmt.Println(m)
-
-	// Output:
-	// map[c:3 d:4 e:5 f:1]
-}
-
-```
-
-### ReplaceValue
-Replace all elements whose value is equal to old.
-
-```go
-package main
-
-import (
-	"fmt"
-	
-	"github.com/dengrandpa/jez/mapjez"
-)
-
-func main() {
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-	}
-	mapjez.DeleteByValues(m, 1, 2)
-
-	fmt.Println(m)
-
-	// Output:
-	// map[c:3 d:4 e:5]
-}
-
-```
-
-### MapToSliceBy
-The map is sliced, the map is traversed, the iteratee function is called for each element, and the result slice is returned after the call.
-
-```go
-package main
-
-import (
-	"fmt"
-	
-	"github.com/dengrandpa/jez/mapjez"
-)
-
-func main() {
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-	}
-	mapjez.DeleteFilter(m, func(key string, value int) bool {
-		return value%2 == 0
-	})
-
-	fmt.Println(m)
-
-	// Output:
-	// map[a:1 c:3 e:5 f:1]
-}
-
-```
-
-### MapToSliceFilter
-The map is sliced, the map is traversed, and the iteratee function is called on each element. If iteratee returns true, the element is added to the result slice.
-
-```go
-package main
-
-import (
-	"fmt"
-	
-	"github.com/dengrandpa/jez/mapjez"
-)
-
-func main() {
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-		"g": 1,
-	}
-	mapjez.ReplaceValue(m, 1, 222)
-
-	fmt.Println(m)
-
-	// Output:
-	// map[a:222 b:2 c:3 d:4 e:5 f:222 g:222]
 }
 
 ```

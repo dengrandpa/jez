@@ -366,80 +366,6 @@ package main
 
 import (
 	"fmt"
-	"sort"
-	"strconv"
-	
-	"github.com/dengrandpa/jez/mapjez"
-)
-
-func main() {
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-	}
-
-	list := mapjez.MapToSliceBy(m, func(key string, value int) string {
-		return key + " " + strconv.Itoa(value)
-	})
-	sort.Strings(list)
-
-	fmt.Println(list)
-
-	// Output:
-	// [a 1 b 2 c 3 d 4 e 5 f 1]
-}
-
-```
-
-### DeleteByValues
-通过value删除多个元素。
-
-```go
-package main
-
-import (
-	"fmt"
-	"sort"
-	"strconv"
-	
-	"github.com/dengrandpa/jez/mapjez"
-)
-
-func main() {
-	m := map[string]int{
-		"a": 1,
-		"b": 2,
-		"c": 3,
-		"d": 4,
-		"e": 5,
-		"f": 1,
-	}
-
-	list := mapjez.MapToSliceFilter(m, func(key string, value int) (string, bool) {
-		return key + " " + strconv.Itoa(value), value%2 == 0
-	})
-	sort.Strings(list)
-
-	fmt.Println(list)
-
-	// Output:
-	// [b 2 d 4]
-}
-
-```
-
-### DeleteFilter
-遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回true，则删除该元素。
-
-```go
-package main
-
-import (
-	"fmt"
 	
 	"github.com/dengrandpa/jez/mapjez"
 )
@@ -463,8 +389,8 @@ func main() {
 
 ```
 
-### ReplaceValue
-替换所有value等于 old 的元素。
+### DeleteByValues
+通过value删除多个元素。
 
 ```go
 package main
@@ -494,8 +420,8 @@ func main() {
 
 ```
 
-### MapToSliceBy
-map转切片，遍历map，对每个元素调用 iteratee 函数，并返回调用后结果切片。
+### DeleteFilter
+遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回true，则删除该元素。
 
 ```go
 package main
@@ -527,8 +453,8 @@ func main() {
 
 ```
 
-### MapToSliceFilter
-map转切片，遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回true，则将该元素添加到结果切片中。
+### ReplaceValue
+替换所有value等于 old 的元素。
 
 ```go
 package main
@@ -555,6 +481,80 @@ func main() {
 
 	// Output:
 	// map[a:222 b:2 c:3 d:4 e:5 f:222 g:222]
+}
+
+```
+
+### MapToSliceBy
+map转切片，遍历map，对每个元素调用 iteratee 函数，并返回调用后结果切片。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sort"
+	"strconv"
+	
+	"github.com/dengrandpa/jez/mapjez"
+)
+
+func main() {
+	m := map[string]int{
+		"a": 1,
+		"b": 2,
+		"c": 3,
+		"d": 4,
+		"e": 5,
+		"f": 1,
+	}
+
+	list := mapjez.MapToSliceBy(m, func(key string, value int) string {
+		return key + " " + strconv.Itoa(value)
+	})
+	sort.Strings(list)
+
+	fmt.Println(list)
+
+	// Output:
+	// [a 1 b 2 c 3 d 4 e 5 f 1]
+}
+
+```
+
+### MapToSliceFilter
+map转切片，遍历map，对每个元素调用 iteratee 函数，如果 iteratee 返回true，则将该元素添加到结果切片中。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sort"
+	"strconv"
+
+	"github.com/dengrandpa/jez/mapjez"
+)
+
+func main() {
+	m := map[string]int{
+		"a": 1,
+		"b": 2,
+		"c": 3,
+		"d": 4,
+		"e": 5,
+		"f": 1,
+	}
+
+	list := mapjez.MapToSliceFilter(m, func(key string, value int) (string, bool) {
+		return key + " " + strconv.Itoa(value), value%2 == 0
+	})
+	sort.Strings(list)
+
+	fmt.Println(list)
+
+	// Output:
+	// [b 2 d 4]
 }
 
 ```
