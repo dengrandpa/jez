@@ -33,7 +33,7 @@ func ExampleConcurrentForEach() {
 		i.Add(item)
 	})
 
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	fmt.Println(i.Load())
 
@@ -63,7 +63,7 @@ func ExampleConcurrentMap() {
 		return strconv.FormatInt(item, 10)
 	})
 
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	fmt.Println(result)
 

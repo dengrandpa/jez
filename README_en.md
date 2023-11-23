@@ -189,6 +189,23 @@ import "github.com/dengrandpa/jez/slicejez"
 -   [Reverse](./docs/slicejez_en.md#reverse)：Invert the order of the elements in the slice.
 -   [Flatten](./docs/slicejez_en.md#flatten)：Convert two-dimensional slices to one-dimensional slices.
 -   [InsertAt](./docs/slicejez_en.md#insertAt)：Insert a value at the specified index of the slice. If the index is greater than or less than 0 in length of the slice, the value is attached to the end of the slice.
+-   [NewSafeSlice](./docs/slicejez.md#newsafeslice)：Create a concurrency safe slice.
+-   [SafeSlice_ForEach](./docs/slicejez.md#safeSliceforeach)：Traverse the slice and call the iterate function for each element.
+-   [SafeSlice_ForEachWithBreak](./docs/slicejez.md#safesliceforeachwithbreak)：Traverse the slice and call the iterate function for each element. If false is returned, stop traversing.
+-   [SafeSlice_Filter](./docs/slicejez.md#safeslicefilter)：Traverse the slice and call the iterate function for each element, returning only the elements with a call result of true.
+-   [SafeSlice_Append](./docs/slicejez.md#safesliceappend)：Add elements to the slice.
+-   [SafeSlice_AppendIfNotDuplicate](./docs/slicejez.md#safesliceappendifnotduplicate)：Add an element to the slice, if the element already exists, do not add it.
+-   [SafeSlice_AppendMultipleIfNotDuplicate](./docs/slicejez.md#safesliceappendmultipleifnotduplicate)：Add multiple elements to the slice, if the element already exists, do not add it.
+-   [SafeSlice_Load](./docs/slicejez.md#safesliceload)：Returns a copy of the slice.
+-   [SafeSlice_LoadByIndex](./docs/slicejez.md#safesliceloadbyindex)：Returns the element at the specified index position, -1 returns the last element, and if the index is out of range, panic.
+-   [SafeSlice_Index](./docs/slicejez.md#safesliceindex)：Returns the index position of the specified element in the slice.
+-   [SafeSlice_Insert](./docs/slicejez.md#safesliceinsert)：Insert an element at the specified index position.
+-   [SafeSlice_Len](./docs/slicejez.md#safeslicelen)：Returns the length of the slice.
+-   [SafeSlice_Remove](./docs/slicejez.md#safesliceremove)：Remove elements from slices.
+-   [SafeSlice_RemoveByIndex](./docs/slicejez.md#safesliceremovebyindex)：Remove the element at the specified index position from the slice.
+-   [SafeSlice_Replace](./docs/slicejez.md#safeslicereplace)：Replace the old element in the slice with new, up to n times. If n is -1, replace all old elements.
+-   [SafeSlice_ReplaceByIndex](./docs/slicejez.md#safeslicereplacebyindex)：Replace the element at the specified index position with new.
+-   [SafeSlice_Slice](./docs/slicejez.md#safesliceslice)：Returns a slice with an index from n to m, but does not include m, which is equivalent to slice [n: m], i.e. [min, max], but does not panic during overflow.
 
 ------
 

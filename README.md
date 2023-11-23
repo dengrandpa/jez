@@ -195,6 +195,23 @@ import "github.com/dengrandpa/jez/slicejez"
 -   [Reverse](./docs/slicejez.md#reverse)：将切片中的元素顺序反转。
 -   [Flatten](./docs/slicejez.md#flatten)：将二维切片转换为一维切片。
 -   [InsertAt](./docs/slicejez.md#insertAt)：在切片的指定索引处插入值，如果索引大于切片的长度或小于 0，则将值附加到切片的末尾。
+-   [NewSafeSlice](./docs/slicejez.md#newsafeslice)：创建一个并发安全的切片。
+-   [SafeSlice_ForEach](./docs/slicejez.md#safeSliceforeach)：遍历切片并为每个元素调用 iteratee 函数。
+-   [SafeSlice_ForEachWithBreak](./docs/slicejez.md#safesliceforeachwithbreak)：遍历切片并为每个元素调用 iteratee 函数，如果返回 false，则停止遍历。
+-   [SafeSlice_Filter](./docs/slicejez.md#safeslicefilter)：遍历切片并为每个元素调用 iteratee 函数，只返回调用结果为true的元素。
+-   [SafeSlice_Append](./docs/slicejez.md#safesliceappend)：添加元素到切片。
+-   [SafeSlice_AppendIfNotDuplicate](./docs/slicejez.md#safesliceappendifnotduplicate)：添加元素到切片，如果元素已经存在，则不添加。
+-   [SafeSlice_AppendMultipleIfNotDuplicate](./docs/slicejez.md#safesliceappendmultipleifnotduplicate)：添加多个元素到切片，如果元素已经存在，则不添加。
+-   [SafeSlice_Load](./docs/slicejez.md#safesliceload)：返回切片的副本。
+-   [SafeSlice_LoadByIndex](./docs/slicejez.md#safesliceloadbyindex)：返回指定索引位置的元素，-1 则返回最后一个元素，如果索引超出范围，panic。
+-   [SafeSlice_Index](./docs/slicejez.md#safesliceindex)：返回指定元素在切片中的索引位置。
+-   [SafeSlice_Insert](./docs/slicejez.md#safesliceinsert)：在指定索引位置插入元素。
+-   [SafeSlice_Len](./docs/slicejez.md#safeslicelen)：返回切片的长度。
+-   [SafeSlice_Remove](./docs/slicejez.md#safesliceremove)：从切片中移除元素。
+-   [SafeSlice_RemoveByIndex](./docs/slicejez.md#safesliceremovebyindex)：从切片中移除指定索引位置的元素。
+-   [SafeSlice_Replace](./docs/slicejez.md#safeslicereplace)：将切片中的元素 old 替换为 new ，最多替换 n 次，如果 n 为-1，则替换所有的 old 元素。
+-   [SafeSlice_ReplaceByIndex](./docs/slicejez.md#safeslicereplacebyindex)：将指定索引位置的元素替换为 new 。
+-   [SafeSlice_Slice](./docs/slicejez.md#safesliceslice)：返回索引从 n 到 m 的切片，但不包括 m，等同于 slice[n:m]，即[min,max)，但不会在溢出时panic。
 
 ------
 

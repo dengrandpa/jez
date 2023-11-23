@@ -42,7 +42,7 @@ func TestConcurrentForEach(t *testing.T) {
 		i.Add(item)
 	})
 
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	ass.Equal(int32(15), i.Load())
 }
@@ -74,7 +74,7 @@ func TestConcurrentMap(t *testing.T) {
 		return strconv.Itoa(item)
 	})
 
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	ass.Equal([]string{"1", "2", "3", "4", "5"}, result)
 

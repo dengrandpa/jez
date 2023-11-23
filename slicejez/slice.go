@@ -625,11 +625,16 @@ func Slice[T any](list []T, n, m int) []T {
 		return []T{}
 	}
 
+	var s []T
 	if m >= len(list) {
-		return list[n:]
+		s = list[n:]
+	} else {
+		s = list[n:m]
 	}
 
-	return list[n:m]
+	dst := make([]T, len(s))
+	copy(dst, s)
+	return dst
 }
 
 // IsSorted 判断切片是否已排序。

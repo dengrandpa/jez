@@ -56,6 +56,23 @@ import "github.com/dengrandpa/jez/slicejez"
 -   [Reverse](#reverse)
 -   [Flatten](#flatten)
 -   [InsertAt](#insertAt)
+-   [NewSafeSlice](#newSafeSlice)
+-   [SafeSlice_ForEach](#safeSliceForEach)
+-   [SafeSlice_ForEachWithBreak](#safeSliceForEachWithBreak)
+-   [SafeSlice_Filter](#safeSliceFilter)
+-   [SafeSlice_Append](#safeSliceAppend)
+-   [SafeSlice_AppendIfNotDuplicate](#safeSliceAppendIfNotDuplicate)
+-   [SafeSlice_AppendMultipleIfNotDuplicate](#safeSliceAppendMultipleIfNotDuplicate)
+-   [SafeSlice_Load](#safeSliceLoad)
+-   [SafeSlice_LoadByIndex](#safeSliceLoadByIndex)
+-   [SafeSlice_Index](#safeSliceIndex)
+-   [SafeSlice_Insert](#safeSliceInsert)
+-   [SafeSlice_Len](#safeSliceLen)
+-   [SafeSlice_Remove](#safeSliceRemove)
+-   [SafeSlice_RemoveByIndex](#safeSliceRemoveByIndex)
+-   [SafeSlice_Replace](#safeSliceReplace)
+-   [SafeSlice_ReplaceByIndex](#safeSliceReplaceByIndex)
+-   [SafeSlice_Slice](#safeSliceSlice)
 
 ------
 
@@ -1172,4 +1189,679 @@ func main() {
 	// Output:
 	// [1 2 666 777 888 3 4 5]
 }
+```
+
+### NewSafeSlice
+创建一个并发安全的切片。
+
+```go
+package main
+
+import (
+    "fmt"
+  
+    "github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{1, 2})
+    fmt.Println(ss.Len())
+  
+    // Output:
+    // 2
+}
+```
+
+### SafeSlice_ForEach
+遍历切片并为每个元素调用 iteratee 函数。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+  
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.ForEach(func(index int, item int) {
+          if item == 100 {
+            fmt.Println(item)
+          }
+        })
+      }(i)
+    }
+  
+    wg.Wait()
+  
+    // Output:
+    // 100
+    // 100
+    // 100
+    // 100
+    // 100
+}
+```
+
+### SafeSlice_ForEachWithBreak
+遍历切片并为每个元素调用 iteratee 函数，如果返回 false，则停止遍历。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+  
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.ForEachWithBreak(func(index int, item int) bool {
+          ok := item < 500
+          if ok {
+            if item == 100 || item == 600 {
+              fmt.Println(item)
+            }
+          }
+          return ok
+        })
+      }(i)
+    }
+  
+    // Output:
+    // 100
+    // 100
+    // 100
+    // 100
+    // 100
+}
+
+```
+
+### SafeSlice_Filter
+遍历切片并为每个元素调用 iteratee 函数，只返回调用结果为true的元素。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+  
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        res := ss.Filter(func(index int, item int) bool {
+          return item == 100
+        })
+        fmt.Println(res)
+      }(i)
+    }
+  
+    // Output:
+    // 100
+    // 100
+    // 100
+    // 100
+    // 100
+}
+
+```
+
+### SafeSlice_Append
+添加元素到切片。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 1000; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.Append(v)
+      }(i)
+    }
+    wg.Wait()
+	
+    fmt.Println(ss.Len())
+  
+    // Output:
+    // 1000
+}
+
+```
+
+### SafeSlice_AppendIfNotDuplicate
+添加元素到切片，如果元素已经存在，则不添加。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 1000; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.AppendIfNotDuplicate(v)
+      }(i)
+    }
+  
+    wg.Wait()
+  
+    actual := slicejez.ToMapBy(ss.Load(), func(index int, item int) (int, struct{}) {
+      return item, struct{}{}
+    })
+	
+    fmt.Println(ss.Len())
+    fmt.Println(len(actual))
+	
+    // Output:
+    // 1000
+    // 1000
+}
+
+```
+
+### SafeSlice_AppendMultipleIfNotDuplicate
+添加多个元素到切片，如果元素已经存在，则不添加。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 1000; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.AppendMultipleIfNotDuplicate(v, v+1)
+      }(i)
+    }
+  
+    wg.Wait()
+  
+    actual := slicejez.ToMapBy(ss.Load(), func(index int, item int) (int, struct{}) {
+      return item, struct{}{}
+    })
+	
+    fmt.Println(ss.Len())
+    fmt.Println(len(actual))
+	
+    // Output:
+    // 1001
+    // 1001
+}
+
+```
+
+### SafeSlice_Load
+返回切片的副本。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 1000; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.AppendMultipleIfNotDuplicate(v, v+1)
+      }(i)
+    }
+  
+    wg.Wait()
+  
+    actual := slicejez.ToMapBy(ss.Load(), func(index int, item int) (int, struct{}) {
+      return item, struct{}{}
+    })
+	
+    fmt.Println(ss.Len())
+    fmt.Println(len(actual))
+	
+    // Output:
+    // 1001
+    // 1001
+}
+
+```
+
+### SafeSlice_LoadByIndex
+返回指定索引位置的元素，-1 则返回最后一个元素，如果索引超出范围，panic。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        fmt.Println(ss.LoadByIndex(0))
+      }(i)
+    }
+	
+    // Output:
+    // 0
+    // 0
+}
+
+```
+
+### SafeSlice_Index
+返回指定元素在切片中的索引位置。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 1000; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        fmt.Println(ss.Index(1))
+      }(i)
+    }
+	
+    // Output:
+    // 1
+    // 1
+}
+
+```
+
+### SafeSlice_Insert
+在指定索引位置插入元素。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+  
+    for i := 0; i < 1000; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.Insert(1, v)
+      }(i)
+    }
+  
+    wg.Wait()
+  
+    fmt.Println(ss.Load())
+    fmt.Println(ss.LoadByIndex(0))
+    fmt.Println(ss.LoadByIndex(-1))
+	
+    // Output:
+    // 1002
+    // 0
+    // 1
+}
+
+```
+
+### SafeSlice_Len
+返回切片的长度。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        fmt.Println(ss.Len())
+      }(i)
+    }
+	
+    // Output:
+    // 1000
+    // 1000
+    // 1000
+    // 1000
+    // 1000
+}
+
+```
+
+### SafeSlice_Remove
+从切片中移除元素。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 500; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.Remove(v, v+500)
+      }(i)
+    }
+  
+    wg.Wait()
+  
+	fmt.Println(ss.Len())
+	
+    // Output:
+    // 0
+}
+
+```
+
+### SafeSlice_RemoveByIndex
+从切片中移除指定索引位置的元素。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+	
+    for i := 0; i < 1000; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.RemoveByIndex(0)
+      }(i)
+    }
+
+    wg.Wait()
+  
+    fmt.Println(ss.Len())
+	
+    // Output:
+    // 0
+}
+
+```
+
+### SafeSlice_Replace
+将切片中的元素 old 替换为 new ，最多替换 n 次，如果 n 为-1，则替换所有的 old 元素。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.Replace(v, 1000+v, -1)
+      }(i)
+    }
+    wg.Wait()
+
+    for i := 0; i < 5; i++ {
+        fmt.Println(ss.LoadByIndex(i))
+    }
+	
+    // Output:
+    // 1000
+    // 1001
+    // 1002
+    // 1003
+    // 1004
+}
+
+```
+
+### SafeSlice_ReplaceByIndex
+将指定索引位置的元素替换为 new 。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        ss.ReplaceByIndex(v, 999-v)
+      }(i)
+    }
+  
+    wg.Wait()
+	
+	for i := 0; i < 5; i++ {
+        fmt.Println(ss.LoadByIndex(i))
+    }
+	
+    // Output:
+    // 999
+    // 998
+    // 997
+    // 996
+    // 995
+}
+
+```
+
+### SafeSlice_Slice
+返回索引从 n 到 m 的切片，但不包括 m，等同于 slice[n:m]，即[min,max)，但不会在溢出时panic。
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	
+	"github.com/dengrandpa/jez/slicejez"
+)
+
+func main() {
+    ss := slicejez.NewSafeSlice([]int{})
+    for i := 0; i < 1000; i++ {
+      ss.Append(i)
+    }
+
+    var wg sync.WaitGroup
+  
+    for i := 0; i < 5; i++ {
+      wg.Add(1)
+      go func(v int) {
+        defer wg.Done()
+        actual := ss.Slice(500, 501)
+        fmt.Println(actual)
+      }(i)
+    }
+	
+    // Output:
+    // 500
+    // 500
+    // 500
+    // 500
+    // 500
+}
+
 ```
