@@ -28,37 +28,37 @@ func ParseTimestamp(timestamp int64) time.Time {
 // StartOfMinute 返回时间 t 所在分钟的开始时间 yyyy-mm-dd hh:mm:00
 func StartOfMinute(t time.Time) time.Time {
 	year, month, day := t.Date()
-	return time.Date(year, month, day, t.Hour(), t.Minute(), 0, 0, t.Location())
+	return NewTime(t.Location(), year, int(month), day, t.Hour(), t.Minute())
 }
 
 // EndOfMinute 返回时间 t 所在分钟的结束时间 yyyy-mm-dd hh:mm:59
 func EndOfMinute(t time.Time) time.Time {
 	year, month, day := t.Date()
-	return time.Date(year, month, day, t.Hour(), t.Minute(), 59, maxNesc, t.Location())
+	return NewTime(t.Location(), year, int(month), day, t.Hour(), t.Minute()+1).Add(-time.Nanosecond)
 }
 
 // StartOfHour 返回时间 t 所在小时的开始时间 yyyy-mm-dd hh:00:00
 func StartOfHour(t time.Time) time.Time {
 	year, month, day := t.Date()
-	return time.Date(year, month, day, t.Hour(), 0, 0, 0, t.Location())
+	return NewTime(t.Location(), year, int(month), day, t.Hour())
 }
 
 // EndOfHour 返回时间 t 所在小时的结束时间 yyyy-mm-dd hh:59:59
 func EndOfHour(t time.Time) time.Time {
 	year, month, day := t.Date()
-	return time.Date(year, month, day, t.Hour(), 59, 59, maxNesc, t.Location())
+	return NewTime(t.Location(), year, int(month), day, t.Hour()+1).Add(-time.Nanosecond)
 }
 
 // StartOfDay 返回时间 t 所在天的开始时间 yyyy-mm-dd 00:00:00
 func StartOfDay(t time.Time) time.Time {
 	year, month, day := t.Date()
-	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
+	return NewTime(t.Location(), year, int(month), day)
 }
 
 // EndOfDay 返回时间 t 所在天的结束时间 yyyy-mm-dd 23:59:59
 func EndOfDay(t time.Time) time.Time {
 	year, month, day := t.Date()
-	return time.Date(year, month, day, 23, 59, 59, maxNesc, t.Location())
+	return NewTime(t.Location(), year, int(month), day+1).Add(-time.Nanosecond)
 }
 
 // StartOfWeekMonday 返回时间 t 所在周的开始时间，周一为第一天 yyyy-mm-dd 00:00:00
@@ -70,7 +70,7 @@ func StartOfWeekMonday(t time.Time) time.Time {
 		weekday = 7
 	}
 
-	return time.Date(year, month, day-weekday+1, 0, 0, 0, 0, t.Location())
+	return NewTime(t.Location(), year, int(month), day-weekday+1)
 }
 
 // EndOfWeekSunday 返回时间 t 所在周的结束时间，周日为最后一天 yyyy-mm-dd 23:59:59
@@ -80,7 +80,7 @@ func EndOfWeekSunday(t time.Time) time.Time {
 	if weekday == 0 {
 		weekday = 7
 	}
-	return time.Date(year, month, day+(7-weekday), 23, 59, 59, maxNesc, t.Location())
+	return NewTime(t.Location(), year, int(month), day+(7-weekday)+1).Add(-time.Nanosecond)
 }
 
 // StartOfWeekSunday 返回时间 t 所在周的开始时间，周日为第一天 yyyy-mm-dd 00:00:00
@@ -90,7 +90,7 @@ func StartOfWeekSunday(t time.Time) time.Time {
 	if weekday == 0 {
 		weekday = 7
 	}
-	return time.Date(year, month, day-weekday, 0, 0, 0, 0, t.Location())
+	return NewTime(t.Location(), year, int(month), day-weekday)
 }
 
 // EndOfWeekMonday 返回时间 t 所在周的结束时间，周一为最后一天 yyyy-mm-dd 23:59:59
@@ -100,29 +100,29 @@ func EndOfWeekMonday(t time.Time) time.Time {
 	if weekday == 0 {
 		weekday = 7
 	}
-	return time.Date(year, month, day+(8-weekday), 23, 59, 59, maxNesc, t.Location())
+	return NewTime(t.Location(), year, int(month), day+(8-weekday)+1).Add(-time.Nanosecond)
 }
 
 // StartOfMonth 返回时间 t 所在月的开始时间 yyyy-mm-01 00:00:00
 func StartOfMonth(t time.Time) time.Time {
 	year, month, _ := t.Date()
-	return time.Date(year, month, 1, 0, 0, 0, 0, t.Location())
+	return NewTime(t.Location(), year, int(month), 1)
 }
 
 // EndOfMonth 返回时间 t 所在月的结束时间 yyyy-mm-dd 23:59:59
 func EndOfMonth(t time.Time) time.Time {
 	year, month, _ := t.Date()
-	return time.Date(year, month+1, 1, 0, 0, 0, 0, t.Location()).Add(-time.Nanosecond)
+	return NewTime(t.Location(), year, int(month)+1, 1).Add(-time.Nanosecond)
 }
 
 // StartOfYear 返回时间 t 所在年的开始时间 yyyy-01-01 00:00:00
 func StartOfYear(t time.Time) time.Time {
-	return time.Date(t.Year(), 1, 1, 0, 0, 0, 0, t.Location())
+	return NewTime(t.Location(), t.Year(), 1, 1)
 }
 
 // EndOfYear 返回时间 t 所在年的结束时间 yyyy-12-31 23:59:59
 func EndOfYear(t time.Time) time.Time {
-	return time.Date(t.Year()+1, 1, 1, 0, 0, 0, 0, t.Location()).Add(-time.Nanosecond)
+	return NewTime(t.Location(), t.Year()+1, 1, 1).Add(-time.Nanosecond)
 }
 
 // AddSecond 添加或删除秒数
@@ -182,7 +182,6 @@ func IsLeapYear(year int) bool {
 
 // RangeHours 返回两个时间之间的所有小时的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
 func RangeHours(start, end time.Time) []time.Time {
-	// Calculate the number of hours between start and end, including both hours.
 	hours := int(end.Sub(start).Hours())
 
 	dates := make([]time.Time, 0, hours+1)
@@ -197,7 +196,6 @@ func RangeHours(start, end time.Time) []time.Time {
 
 // RangeDays 返回两个时间之间的所有天的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
 func RangeDays(start, end time.Time) []time.Time {
-	// Calculate the number of days between start and end, including both days.
 	days := int(end.Sub(start).Hours() / 24)
 
 	dates := make([]time.Time, 0, days+1)
@@ -213,7 +211,6 @@ func RangeDays(start, end time.Time) []time.Time {
 
 // RangeMonths 返回两个时间之间的所有月的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
 func RangeMonths(start, end time.Time) []time.Time {
-	// Calculate the number of months between start and end, including both months.
 	months := (end.Year()-start.Year())*12 + int(end.Month()) - int(start.Month())
 
 	dates := make([]time.Time, 0, months+1)
@@ -229,7 +226,6 @@ func RangeMonths(start, end time.Time) []time.Time {
 
 // RangeYears 返回两个时间之间的所有年的切片，包含 start 和 end，即[start,end]，如果start和end结果一样，则只返回1个
 func RangeYears(start, end time.Time) []time.Time {
-	// Calculate the number of years between start and end, including both years.
 	years := end.Year() - start.Year()
 
 	dates := make([]time.Time, 0, years+1)
@@ -244,7 +240,10 @@ func RangeYears(start, end time.Time) []time.Time {
 }
 
 // NewTime 相当于 time.Date，如果不传参数则相当于 time.Now。
-func NewTime(t ...int) time.Time {
+func NewTime(loc *time.Location, t ...int) time.Time {
+	if loc == nil {
+		loc = time.Local
+	}
 	size := len(t)
 	if size == 0 {
 		return time.Now()
@@ -255,7 +254,7 @@ func NewTime(t ...int) time.Time {
 		param[i] = t[i]
 	}
 
-	return time.Date(param[0], time.Month(param[1]), param[2], param[3], param[4], param[5], param[6], time.Local)
+	return time.Date(param[0], time.Month(param[1]), param[2], param[3], param[4], param[5], param[6], loc)
 }
 
 // SubTime 返回 t1 和 t2 之间的差值的日、小时、分钟和秒

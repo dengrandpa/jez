@@ -28,10 +28,8 @@ func (t TimeFormat) string() string {
 	return string(t)
 }
 
-const maxNesc = 999999999
-
 const (
-	secondsInDay    = 24 * 60 * 60
-	secondsInHour   = 60 * 60
+	secondsInDay    = 86400
+	secondsInHour   = 3600
 	secondsInMinute = 60
 )

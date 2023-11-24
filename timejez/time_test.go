@@ -398,10 +398,10 @@ func TestNewTime(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
 
-	ass.Equal(time.Now().Unix(), NewTime().Unix())
+	ass.Equal(time.Now().Unix(), NewTime(nil).Unix())
 
-	ass.Equal(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), NewTime(2022, 1, 2))
-	ass.Equal(time.Date(2022, 0, 0, 0, 0, 0, 0, time.Local), NewTime(2022))
+	ass.Equal(time.Date(2022, 1, 2, 0, 0, 0, 0, time.Local), NewTime(nil, 2022, 1, 2))
+	ass.Equal(time.Date(2022, 0, 0, 0, 0, 0, 0, time.Local), NewTime(nil, 2022))
 }
 
 func TestSubTime(t *testing.T) {

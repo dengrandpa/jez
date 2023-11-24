@@ -368,9 +368,9 @@ func ExampleNewTime() {
 
 	localTm := tm.In(time.Local)
 
-	tm1 := NewTime(localTm.Year(), int(localTm.Month()), localTm.Day(), localTm.Hour(), localTm.Minute(), localTm.Second())
+	tm1 := NewTime(nil, localTm.Year(), int(localTm.Month()), localTm.Day(), localTm.Hour(), localTm.Minute(), localTm.Second())
 
-	fmt.Println(NewTime().Unix() == time.Now().Unix())
+	fmt.Println(NewTime(nil).Unix() == time.Now().Unix())
 	fmt.Println(ToCST(tm1))
 
 	// Output:
