@@ -6,7 +6,7 @@ import (
 )
 
 // 返回时间格式化的格式，如果没有传入，则默认为 YYYYMMDDHHMMSS
-func getTimeFormat(format []TimeFormat) TimeFormat {
+func loadTimeFormat(format ...TimeFormat) TimeFormat {
 	t := YYYYMMDDHHMMSS
 	if len(format) > 0 {
 		t = format[0]
@@ -16,7 +16,7 @@ func getTimeFormat(format []TimeFormat) TimeFormat {
 
 // ParseTime 将字符串转换为时间，默认格式为 YYYYMMDDHHMMSS
 func ParseTime(tm string, format ...TimeFormat) time.Time {
-	t, _ := time.ParseInLocation(getTimeFormat(format).string(), tm, time.Local)
+	t, _ := time.ParseInLocation(loadTimeFormat(format...).string(), tm, time.Local)
 	return t
 }
 
@@ -162,7 +162,7 @@ func AddYear(t time.Time, year int) time.Time {
 
 // FormatTime 将时间格式化为字符串，默认格式为 yyyy-mm-dd hh:mm:ss
 func FormatTime(t time.Time, format ...TimeFormat) string {
-	return t.Format(getTimeFormat(format).string())
+	return t.Format(loadTimeFormat(format...).string())
 }
 
 // FormatTimestamp 将时间戳格式化为字符串，默认格式为 yyyy-mm-dd hh:mm:ss

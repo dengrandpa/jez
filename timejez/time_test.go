@@ -7,11 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_getTimeFormat(t *testing.T) {
+func Test_loadTimeFormat(t *testing.T) {
 	t.Parallel()
 	ass := assert.New(t)
-	tf := getTimeFormat([]TimeFormat{YYYYMMDD})
-	tf1 := getTimeFormat(nil)
+	tf := loadTimeFormat(YYYYMMDD)
+	tf1 := loadTimeFormat()
 
 	ass.Equal(YYYYMMDD, tf)
 	ass.Equal(YYYYMMDDHHMMSS, tf1)
