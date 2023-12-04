@@ -21,15 +21,15 @@ func NewSafeSlice[T comparable](list []T) *SafeSlice[T] {
 // ForEach 遍历切片并为每个元素调用 iteratee 函数。
 func (s *SafeSlice[T]) ForEach(iteratee func(index int, item T)) {
 	s.lock.RLock()
+	defer s.lock.RUnlock()
 	ForEach(s.list, iteratee)
-	s.lock.RUnlock()
 }
 
 // ForEachWithBreak 遍历切片并为每个元素调用 iteratee 函数，如果返回 false，则停止遍历。
 func (s *SafeSlice[T]) ForEachWithBreak(iteratee func(index int, item T) bool) {
 	s.lock.RLock()
+	defer s.lock.RUnlock()
 	ForEachWithBreak(s.list, iteratee)
-	s.lock.RUnlock()
 }
 
 // Filter 遍历切片并为每个元素调用 iteratee 函数，只返回调用结果为true的元素。
