@@ -74,7 +74,7 @@ func main(){
   // [test-file.txt test-file1.txt]
 }
 
-`````````
+```
 
 ### FilterMapWalk
 返回遍历所有目录、子目录，对每个文件调用 iteratee，如果返回 true，则将结果放入结果集中。

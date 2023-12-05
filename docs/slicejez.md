@@ -106,7 +106,7 @@ func main() {
 	// [a b c]
 	// [0 1 2]
 }
-`````````
+```
 
 ### ForEachWithBreak
 遍历切片并为每个元素调用 iteratee 函数，如果返回 false，则停止遍历。

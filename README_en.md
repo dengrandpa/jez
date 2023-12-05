@@ -256,3 +256,36 @@ import "github.com/dengrandpa/jez/timejez"
 
 ------
 
+## [Validatorjez](./docs/validatorjez.md#validatorjez)
+Provides some commonly used validation operation functions.
+
+```go
+import "github.com/dengrandpa/jez/validatorjez"
+```
+### 函数
+
+-   [IsBase64](./docs/validatorjez_en.md#isBase64)：Is it base64.
+-   [IsBase64URL](./docs/validatorjez_en.md#isBase64URL)：Is it base64URL.
+-   [IsChineseMainlandIDCard](./docs/validatorjez_en.md#isChineseMainlandIDCard)：Is it Chinese Mainland ID card number.
+-   [IsChineseMainlandPhoneNumber](./docs/validatorjez_en.md#isChineseMainlandPhoneNumber)：Is it a mobile phone number in Chinese Mainland, and withCode is whether country code 86/+86 can be included.
+-   [IsFloat](./docs/validatorjez_en.md#isFloat)：Is it a floating-point number.
+-   [IsFloatType](./docs/validatorjez_en.md#isFloatType)：Is it a floating-point number type.
+-   [IsIP](./docs/validatorjez_en.md#isIP)：Is it an IP address.
+-   [IsIPv4](./docs/validatorjez_en.md#isIPv4)：Is it an IPv4 address.
+-   [IsIPv6](./docs/validatorjez_en.md#isIPv6)：Is it an IPv6 address.
+-   [IsIn](./docs/validatorjez_en.md#isIn)：Is it in the specified list.
+-   [IsInt](./docs/validatorjez_en.md#isInt)：Is it an integer.
+-   [IsIntType](./docs/validatorjez_en.md#isIntType)：Is it of integer type.
+-   [IsJSON](./docs/validatorjez_en.md#isJSON)：Is it JSON.
+-   [IsLongitude](./docs/validatorjez_en.md#isLongitude)：Is it longitude.
+-   [IsLatitude](./docs/validatorjez_en.md#isLatitude)：Is it latitude.
+-   [IsNum](./docs/validatorjez_en.md#isNum)：Is it a number (including floating-point numbers).
+-   [IsNumType](./docs/validatorjez_en.md#isNumType)：Is it a numeric type (including floating-point numbers).
+-   [IsPort](./docs/validatorjez_en.md#isPort)：Is it a port number.
+-   [IsPrefixOrSuffix](./docs/validatorjez_en.md#isPrefixOrSuffix)：Does it start or end with the specified string.
+-   [IsRange](./docs/validatorjez_en.md#isRange)：Numerical range.
+-   [IsRegex](./docs/validatorjez_en.md#isRegex)：Is it a regular expression.
+-   [IsRegexMatch](./docs/validatorjez_en.md#isRegexMatch)：Whether to match regular expressions.
+-   [RuneLength](./docs/validatorjez_en.md#runeLength)：Character length.
+-   [StringLength](./docs/validatorjez_en.md#stringLength)：String length.
+

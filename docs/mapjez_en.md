@@ -76,7 +76,7 @@ func main() {
 	// [1 1 2 3 4 5]
 }
 
-`````````
+```
 
 ### Filter
 Traverse the map and call the iteratee function for each element. If iteratee returns true, the element is added to the result map.

@@ -49,6 +49,7 @@ import "github.com/dengrandpa/jez/mapjez"
 -   [Randomjez](#randomjez)：提供了一些随机数生成的函数。
 -   [Slicejez](#slicejez)：提供了一些对切片的操作，包括遍历、映射、过滤、去重、求差集、求交集等。
 -   [Timejez](#timejez)：提供了时间相关的一些操作，包括时间格式化、时间计算、时间区间计算、时间转换等
+-   [Validatorjez](#validatorjez)：提供了一些常用的效验操作函数。
 
 ------
 
@@ -261,4 +262,37 @@ import "github.com/dengrandpa/jez/timejez"
 -   [ToCST](./docs/timejez.md#toCST)：将时间转换为中国时区
 
 ------
+
+## [Validatorjez](./docs/validatorjez.md#validatorjez)
+提供了一些常用的效验操作函数
+
+```go
+import "github.com/dengrandpa/jez/validatorjez"
+```
+### 函数
+
+-   [IsBase64](./docs/validatorjez.md#isBase64)：是否为base64
+-   [IsBase64URL](./docs/validatorjez.md#isBase64URL)：是否为base64url
+-   [IsChineseMainlandIDCard](./docs/validatorjez.md#isChineseMainlandIDCard)：是否为中国大陆身份证号码
+-   [IsChineseMainlandPhoneNumber](./docs/validatorjez.md#isChineseMainlandPhoneNumber)：是否为中国大陆手机号码, withCode为是否可包含国家代码 86 / +86
+-   [IsFloat](./docs/validatorjez.md#isFloat)：是否为浮点数
+-   [IsFloatType](./docs/validatorjez.md#isFloatType)：是否为浮点数类型
+-   [IsIP](./docs/validatorjez.md#isIP)：是否为IP地址
+-   [IsIPv4](./docs/validatorjez.md#isIPv4)：是否为IPv4地址
+-   [IsIPv6](./docs/validatorjez.md#isIPv6)：是否为IPv6地址
+-   [IsIn](./docs/validatorjez.md#isIn)：是否在指定列表中
+-   [IsInt](./docs/validatorjez.md#isInt)：是否为整数
+-   [IsIntType](./docs/validatorjez.md#isIntType)：是否为整数类型
+-   [IsJSON](./docs/validatorjez.md#isJSON)：是否为json
+-   [IsLongitude](./docs/validatorjez.md#isLongitude)：是否为经度
+-   [IsLatitude](./docs/validatorjez.md#isLatitude)：是否为纬度
+-   [IsNum](./docs/validatorjez.md#isNum)：是否为数字(包含浮点数)
+-   [IsNumType](./docs/validatorjez.md#isNumType)：是否为数字类型(包含浮点数)
+-   [IsPort](./docs/validatorjez.md#isPort)：是否为端口号
+-   [IsPrefixOrSuffix](./docs/validatorjez.md#isPrefixOrSuffix)：是否以指定字符串开头或结尾
+-   [IsRange](./docs/validatorjez.md#isRange)：数值范围
+-   [IsRegex](./docs/validatorjez.md#isRegex)：是否为正则表达式
+-   [IsRegexMatch](./docs/validatorjez.md#isRegexMatch)：是否匹配正则表达式
+-   [RuneLength](./docs/validatorjez.md#runeLength)：字符长度
+-   [StringLength](./docs/validatorjez.md#stringLength)：字符串长度
 

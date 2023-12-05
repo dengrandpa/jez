@@ -69,7 +69,7 @@ func main() {
 	// true
 	// true
 }
-`````````
+```
 
 ### RandomLower
 Randomly generate lowercase letter strings.

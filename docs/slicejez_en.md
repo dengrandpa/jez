@@ -106,7 +106,7 @@ func main() {
 	// [a b c]
 	// [0 1 2]
 }
-`````````
+```
 
 ### ForEachWithBreak
 Traverse the slice and call the iteratee function for each element, and if it returns false, stop the traversal.
